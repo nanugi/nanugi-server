@@ -31,7 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .authorizeRequests() // 다음 리퀘스트에 대한 사용권한 체크
-                    .antMatchers("/*/signin", "/*/signin/**", "/*/signup", "/*/signup/**").permitAll() // 가입 및 인증 주소는 누구나 접근가능
+                    .antMatchers("/*/signin", "/*/signin/**", "/*/signup", "/*/signup/**", "/*/email-verification/**").permitAll() // 가입 및 인증 주소는 누구나 접근가능
                     .antMatchers(HttpMethod.GET, "/exception/**", "/helloworld/**","/actuator/health", "/v1/board/**", "/favicon.ico").permitAll() // 등록된 GET요청 리소스는 누구나 접근가능
                     .antMatchers(HttpMethod.POST, "/*/board/*").hasRole("ADMIN")
                     .anyRequest().hasRole("USER") // 그외 나머지 요청은 모두 인증된 회원만 접근 가능

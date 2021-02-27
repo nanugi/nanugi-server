@@ -28,3 +28,9 @@ resourceNotExist:
 notValid:
   code: "-1008"
   msg: "please send a valid form."
+emailSendFail:
+  code: "-1009"
+  msg: "can't send an email, try again"
+emailNotVerified:
+  code: "-1010"
+  msg: "email is not verified yet, please check your email box"

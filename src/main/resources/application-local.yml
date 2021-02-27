@@ -19,3 +19,7 @@ spring:
     generate-ddl: true
   url:
     base: http://localhost:8080
+
+mailgun:
+  url:
+    base: http://localhost:8080

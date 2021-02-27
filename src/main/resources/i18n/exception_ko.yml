@@ -28,3 +28,9 @@ resourceNotExist:
 notValid:
   code: "-1008"
   msg: "유효하지 않은 form 입니다."
+emailSendFail:
+  code: "-1009"
+  msg: "이메일을 보낼 수 없습니다. 다시 시도하세요."
+emailNotVerified:
+  code: "-1010"
+  msg: "이메일 인증이 완료되지 않았습니다. 이메일 함에서 인증 메일을 확인해보세요."

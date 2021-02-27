@@ -1,11 +1,13 @@
 package com.nanugi.api.service.user;
 
 import com.nanugi.api.advice.exception.CUserNotFoundException;
+import com.nanugi.api.entity.User;
 import com.nanugi.api.repo.UserJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service

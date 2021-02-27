@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.ElementCollection;
 import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
@@ -33,6 +34,19 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult defaultException(HttpServletRequest request, Exception e) {
         return responseService.getFailResult(Integer.valueOf(getMessage("unKnown.code")), getMessage("unKnown.msg") + "(" + e.getClass() + ")");
+    }
+
+    /* Email Verification Error*/
+    @ExceptionHandler(CEmailSendFailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult emailSendFail(HttpServletRequest request, CEmailSendFailException e) {
+        return responseService.getFailResult(Integer.valueOf(getMessage("emailSendFail.code")), getMessage("emailSendFail.msg"));
+    }
+
+    @ExceptionHandler(CEmailNotVerifiedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected CommonResult emailNotVerified(HttpServletRequest request, CEmailNotVerifiedException e){
+        return responseService.getFailResult(Integer.valueOf(getMessage("emailNotVerified.code")), getMessage("emailNotVerified.msg"));
     }
 
     @ExceptionHandler(CUserNotFoundException.class)

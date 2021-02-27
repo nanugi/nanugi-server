@@ -1,5 +1,6 @@
 package com.nanugi.api.controller;
 
+import com.nanugi.api.advice.exception.CAuthenticationEntryPointException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.User;
 import com.nanugi.api.model.dto.UserResponse;
@@ -65,6 +66,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
         User user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+
         user.setName(name);
         user = userJpaRepo.save(user);
         return responseService.getSingleResult(new UserResponse(user.getName(), user.getUid()));
@@ -77,8 +79,16 @@ public class UserController {
     @DeleteMapping(value = "/user/{msrl}")
     public CommonResult delete(
             @ApiParam(value = "회원번호", required = true) @PathVariable long msrl) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        User user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+
+        if(user.getMsrl() != msrl){
+            throw new CAuthenticationEntryPointException();
+        }
+
         userJpaRepo.deleteById(msrl);
-        // 성공 결과 정보만 필요한경우 getSuccessResult()를 이용하여 결과를 출력한다.
         return responseService.getSuccessResult();
     }
 }

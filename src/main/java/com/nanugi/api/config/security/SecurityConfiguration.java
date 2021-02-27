@@ -1,6 +1,9 @@
 package com.nanugi.api.config.security;
 
+import com.nanugi.api.entity.User;
+import com.nanugi.api.repo.UserJpaRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,13 +12,30 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserJpaRepo userJpaRepo;
+    private final PasswordEncoder passwordEncoder;
+
+    @Value("${test.user.id}")
+    private String testUserId;
+
+    @Value("${test.user.password}")
+    private String testUserPassword;
+
+    @Value("${admin.user.id}")
+    private String adminUserId;
+
+    @Value("${admin.user.password}")
+    private String adminUserPassword;
 
     @Bean
     @Override
@@ -42,12 +62,31 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 
+
     }
 
     @Override // ignore swagger security config
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**",
                 "/swagger-ui.html", "/webjars/**", "/swagger/**");
+
+        userJpaRepo.save(User.builder()
+                .uid(testUserId)
+                .password(passwordEncoder.encode(testUserPassword))
+                .name("test user")
+                .isVerified(true)
+                .verifyCode("")
+                .roles(Collections.singletonList("ROLE_USER"))
+                .build());
+
+        userJpaRepo.save(User.builder()
+                .uid(adminUserId)
+                .password(passwordEncoder.encode(adminUserPassword))
+                .name("admin user")
+                .isVerified(true)
+                .verifyCode("")
+                .roles(Collections.singletonList("ROLE_ADMIN"))
+                .build());
 
     }
 }

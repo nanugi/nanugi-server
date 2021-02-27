@@ -25,7 +25,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected CommonResult validationException(HttpServletRequest request, MethodArgumentNotValidException e){
-        return responseService.getFailResult(Integer.valueOf(getMessage("notValid.code")), getMessage("notValid.msg"));
+        return responseService.getFailResult(Integer.valueOf(getMessage("notValid.code")), getMessage("notValid.msg") + " " + e.getFieldError().getField() + " : " + e.getFieldError().getDefaultMessage());
     }
 
     @ExceptionHandler(Exception.class)

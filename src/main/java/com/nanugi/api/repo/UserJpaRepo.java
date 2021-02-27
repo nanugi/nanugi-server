@@ -11,5 +11,4 @@ public interface UserJpaRepo extends JpaRepository<User, Long> {
     Optional<User> findByVerifyCode(String code);
 
     User save(User user);
-
 }

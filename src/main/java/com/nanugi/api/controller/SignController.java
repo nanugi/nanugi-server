@@ -16,8 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Type;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Collections;
 import java.util.Random;
 
 @Api(tags = {"1. Sign"})

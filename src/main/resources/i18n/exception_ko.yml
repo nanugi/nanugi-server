@@ -34,3 +34,4 @@ emailSendFail:
 emailNotVerified:
   code: "-1010"
   msg: "이메일 인증이 완료되지 않았습니다. 이메일 함에서 인증 메일을 확인해보세요."
+

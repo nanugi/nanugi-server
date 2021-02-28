@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 public class EmailSenderService {
@@ -21,7 +23,9 @@ public class EmailSenderService {
     @Value("${mailgun.url.base}")
     private String BASE_URL;
 
-    public JsonNode sendSimpleMessage(String to, String code) throws UnirestException {
+    private String URL = "https://nanugi.github.io/nanugi-web/emailVerification/";
+
+    public JsonNode sendVerificationEmail(String to, String code) throws UnirestException {
 
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
                 .basicAuth("api", API_KEY)
@@ -43,7 +47,7 @@ public class EmailSenderService {
                                 "\n" +
                                 "    <a style=\"padding: 10px 30px; margin: 0px auto; background-color: #F2BB63; font-size: 20px; font-weight: bold;\n" +
                                 "    color: #fff; border-radius: 10px; cursor: pointer; margin-bottom: 20px; text-decoration: none;\" href=\"" +
-                                BASE_URL + "/v1/email-verification?code="+code+"\">"
+                                URL+code+"\">"
                                 +"        인증 완료\n" +
                                 "    </a>\n" +
                                 "  </div>\n" +
@@ -52,5 +56,32 @@ public class EmailSenderService {
                 .asJson();
 
         return request.getBody();
+    }
+
+    public JsonNode sendCertifyEmail(String to, String code) throws UnirestException {
+
+        HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
+                .basicAuth("api", API_KEY)
+                .field("from", "Nanugi Team <no-reply@nanugi.ml>")
+                .field("to", to)
+                .field("subject", "[나누기] 비밀번호 찾기 인증 코드 입니다.")
+                .field("text",
+                    "다음 인증 코드를 입력하세요\n"
+                            + code
+                            + "\n"
+                )
+                .asJson();
+
+        return request.getBody();
+    }
+
+    public String getSecretCode(){
+        Random random = new Random();
+        String code = "";
+
+        for(int i=0; i<24; i++){
+            code += (char)(random.nextInt(25)+97);
+        }
+        return code;
     }
 }

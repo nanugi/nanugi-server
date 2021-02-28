@@ -63,23 +63,29 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 
 
-        userJpaRepo.save(User.builder()
-                .uid(testUserId)
-                .password(passwordEncoder.encode(testUserPassword))
-                .name("test user")
-                .isVerified(true)
-                .verifyCode("")
-                .roles(Collections.singletonList("ROLE_USER"))
-                .build());
+        try{
+            userJpaRepo.save(User.builder()
+                    .uid(testUserId)
+                    .password(passwordEncoder.encode(testUserPassword))
+                    .name("test user")
+                    .isVerified(true)
+                    .verifyCode("")
+                    .roles(Collections.singletonList("ROLE_USER"))
+                    .build());
 
-        userJpaRepo.save(User.builder()
-                .uid(adminUserId)
-                .password(passwordEncoder.encode(adminUserPassword))
-                .name("admin user")
-                .isVerified(true)
-                .verifyCode("")
-                .roles(Collections.singletonList("ROLE_ADMIN"))
-                .build());
+
+            userJpaRepo.save(User.builder()
+                    .uid(adminUserId)
+                    .password(passwordEncoder.encode(adminUserPassword))
+                    .name("admin user")
+                    .isVerified(true)
+                    .verifyCode("")
+                    .roles(Collections.singletonList("ROLE_ADMIN"))
+                    .build());
+        }
+        catch (Exception e){
+
+        }
 
     }
 

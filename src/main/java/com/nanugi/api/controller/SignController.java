@@ -126,7 +126,7 @@ public class SignController {
 
     @ApiOperation(value="비밀번호 찾기 (인증 코드 확인, 비밀번호 변경)", notes="인증 코드 입력 후 비밀번호를 변경합니다")
     @PostMapping(value="/set-new-password")
-    public CommonResult SetNewPassword(@ApiParam(value="인증 코드", required = true) @RequestBody NewPassRequest newPassRequest){
+    public CommonResult SetNewPassword(@ApiParam(value="인증 코드", required = true) @Valid @RequestBody NewPassRequest newPassRequest){
 
         User user = userJpaRepo.findByCertCode(newPassRequest.getCode()).orElseThrow(CUserNotFoundException::new);
         user.setCertCode("");
@@ -166,7 +166,7 @@ public class SignController {
     @RequiredArgsConstructor
     static class NewPassRequest {
 
-        @NotNull @NotEmpty @Pattern(regexp = "[a-z]{24}", message = "올바른 인증 코드가 아닙니다.")
+        @NotNull @NotEmpty @Pattern(regexp = "^[a-z]{24}$", message = "올바른 인증 코드가 아닙니다.")
         String code;
 
         @NotNull @NotEmpty

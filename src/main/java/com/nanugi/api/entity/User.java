@@ -42,6 +42,9 @@ public class User extends TimeStampedEntity implements UserDetails {
     @Column(nullable = false)
     private Boolean isVerified;
 
+    @Column
+    private String certCode;
+
     @Column(length = 100)
     private String provider;
 

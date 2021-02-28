@@ -64,15 +64,10 @@ public class SignController {
             throw new CUserExistException();
         }
 
-        Random random = new Random();
-        String code = "";
-
-        for(int i=0; i<24; i++){
-            code += (char)(random.nextInt(25)+97);
-        }
+        String code = emailSenderService.getSecretCode();
 
         try{
-            emailSenderService.sendSimpleMessage(userSignupRequest.getId(), code);
+            emailSenderService.sendVerificationEmail(userSignupRequest.getId(), code);
         }
         catch(UnirestException e){
             throw new CEmailSendFailException();
@@ -84,6 +79,7 @@ public class SignController {
                 .name(userSignupRequest.getName())
                 .isVerified(false)
                 .verifyCode(code)
+                .certCode("")
                 .build());
 
         return responseService.getSuccessResult();
@@ -102,6 +98,43 @@ public class SignController {
         userJpaRepo.save(user);
 
         return responseService.getSuccessResult();
+    }
+
+    @ApiOperation(value="비밀번호 찾기 (인증 코드 발송)", notes="이메일을 입력하면 인증 코드를 생성합니다")
+    @PostMapping(value="/send-certcode")
+    public CommonResult FindPassword(@ApiParam(value="회원 가입 시 이메일", required = true) @RequestBody String email){
+
+        User user = userJpaRepo.findByUid(email).orElseThrow(CUserNotFoundException::new);
+        if(!user.getIsVerified()){
+            throw new CEmailNotVerifiedException();
+        }
+
+        String code = emailSenderService.getSecretCode();
+
+        user.setCertCode(code);
+        user = userJpaRepo.save(user);
+
+        try {
+            emailSenderService.sendCertifyEmail(user.getUid(), user.getCertCode());
+        }
+        catch(UnirestException e){
+            throw new CEmailSendFailException();
+        }
+
+        return responseService.getSuccessResult();
+    }
+
+    @ApiOperation(value="비밀번호 찾기 (인증 코드 확인, 비밀번호 변경)", notes="인증 코드 입력 후 비밀번호를 변경합니다")
+    @PostMapping(value="/set-new-password")
+    public CommonResult SetNewPassword(@ApiParam(value="인증 코드", required = true) @RequestBody NewPassRequest newPassRequest){
+
+        User user = userJpaRepo.findByCertCode(newPassRequest.getCode()).orElseThrow(CUserNotFoundException::new);
+        user.setCertCode("");
+
+        user.setPassword(passwordEncoder.encode(newPassRequest.getPassword()));
+        userJpaRepo.save(user);
+
+        return responseService.getSuccessResult("성공적으로 비밀번호가 변경되었습니다.");
     }
 
     @Data
@@ -127,5 +160,16 @@ public class SignController {
 
         @NotNull @NotEmpty
         String name;
+    }
+
+    @Data
+    @RequiredArgsConstructor
+    static class NewPassRequest {
+
+        @NotNull @NotEmpty @Pattern(regexp = "[a-z]{24}", message = "올바른 인증 코드가 아닙니다.")
+        String code;
+
+        @NotNull @NotEmpty
+        String password;
     }
 }

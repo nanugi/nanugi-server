@@ -50,6 +50,14 @@ public class ResponseService {
         setSuccessResult(result);
         return result;
     }
+
+    public CommonResult getSuccessResult(String msg) {
+        CommonResult result = new CommonResult();
+        result.setMsg(msg);
+        setSuccessResult(result);
+        return result;
+    }
+
     // 실패 결과만 처리하는 메소드
     public CommonResult getFailResult(int code, String msg) {
         CommonResult result = new CommonResult();

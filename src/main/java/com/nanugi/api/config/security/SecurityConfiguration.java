@@ -63,13 +63,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 
 
-    }
-
-    @Override // ignore swagger security config
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**",
-                "/swagger-ui.html", "/webjars/**", "/swagger/**");
-
         userJpaRepo.save(User.builder()
                 .uid(testUserId)
                 .password(passwordEncoder.encode(testUserPassword))
@@ -88,5 +81,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .roles(Collections.singletonList("ROLE_ADMIN"))
                 .build());
 
+    }
+
+    @Override // ignore swagger security config
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**",
+                "/swagger-ui.html", "/webjars/**", "/swagger/**");
     }
 }

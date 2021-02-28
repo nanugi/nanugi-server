@@ -119,7 +119,7 @@ public class SignController {
     @RequiredArgsConstructor
     static class UserSignupRequest {
 
-        @NotNull @NotEmpty @Email @Pattern(regexp = "^.*((.ac.kr$)|(.edu$))", message = "Invalid email address!")
+        @NotNull @NotEmpty @Email @Pattern(regexp = "^.*((.ac.kr$)|(.edu$))", message = "학교 이메일을 입력해주세요.")
         String id;
 
         @NotNull @NotEmpty

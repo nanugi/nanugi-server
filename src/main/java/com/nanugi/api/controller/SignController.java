@@ -102,9 +102,9 @@ public class SignController {
 
     @ApiOperation(value="비밀번호 찾기 (인증 코드 발송)", notes="이메일을 입력하면 인증 코드를 생성합니다")
     @PostMapping(value="/send-certcode")
-    public CommonResult FindPassword(@ApiParam(value="회원 가입 시 이메일", required = true) @RequestBody String email){
+    public CommonResult FindPassword(@ApiParam(value="회원 가입 시 이메일", required = true) @RequestBody CertRequest certRequest){
 
-        User user = userJpaRepo.findByUid(email).orElseThrow(CUserNotFoundException::new);
+        User user = userJpaRepo.findByUid(certRequest.getEmail()).orElseThrow(CUserNotFoundException::new);
         if(!user.getIsVerified()){
             throw new CEmailNotVerifiedException();
         }
@@ -160,6 +160,14 @@ public class SignController {
 
         @NotNull @NotEmpty
         String name;
+    }
+
+    @Data
+    @RequiredArgsConstructor
+    static class CertRequest{
+
+        @NotNull @NotEmpty
+        String email;
     }
 
     @Data

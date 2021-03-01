@@ -65,10 +65,24 @@ public class EmailSenderService {
                 .field("from", "Nanugi Team <no-reply@nanugi.ml>")
                 .field("to", to)
                 .field("subject", "[나누기] 비밀번호 찾기 인증 코드 입니다.")
-                .field("text",
-                    "다음 인증 코드를 입력하세요\n"
-                            + code
-                            + "\n"
+                .field("html",
+                    "<div style=\"background-color:#fff; margin:0; padding:0; font-size:14px;\">\n" +
+                            "  <div style=\"width: 480px; margin: 0 auto; padding: 24px 12px 12px; border: none; background: #ffffff; text-align: center;\">\n" +
+                            "    <div style=\"max-width: 480px; margin-bottom: 30px; padding: 10px; background-color: #f7c46a; text-align: center;\">\n" +
+                            "      <div style=\"width: 100%; color: #fff; font-weight: bold; font-size: 25px;\">비밀번호 변경</div>\n" +
+                            "    </div>\n" +
+                            "    <p style=\"margin-bottom: 30px; font-size: 15px; line-height: 1.6;\">\n" +
+                            "      해당 회원의 비밀번호를 변경 시도를 했습니다. <br />비밀번호를 변경하기 위한 인증코드 입니다.<br /><br />비밀번호 변경을 완료하려면 아래 <strong>인증 코드</strong>를 입력하세요.\n" +
+                            "    </p>\n" +
+                            "\n" +
+                            "    <div style=\"width: 480px; background-color: #B3A6B3; height: 1px; margin-bottom: 30px;\"></div>\n" +
+                            "\n" +
+                            "    <a style=\"padding: 10px 30px; margin: 0px auto; background-color: #F2BB63; font-size: 20px; font-weight: bold;\n" +
+                            "    color: #fff; border-radius: 10px; margin-bottom: 20px; text-decoration: none;\">\n" +
+                            code + "\n" +
+                            "    </a>\n" +
+                            "  </div>\n" +
+                            "</div>"
                 )
                 .asJson();
 

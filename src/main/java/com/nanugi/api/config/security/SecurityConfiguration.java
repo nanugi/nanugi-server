@@ -1,6 +1,9 @@
 package com.nanugi.api.config.security;
 
+import com.nanugi.api.advice.exception.CUserNotFoundException;
+import com.nanugi.api.entity.Post;
 import com.nanugi.api.entity.User;
+import com.nanugi.api.repo.PostJpaRepo;
 import com.nanugi.api.repo.UserJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Collections;
+import java.util.Random;
+
+import static java.lang.Thread.sleep;
 
 @RequiredArgsConstructor
 @Configuration
@@ -23,6 +29,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserJpaRepo userJpaRepo;
+    private final PostJpaRepo postJpaRepo;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${test.user.id}")
@@ -63,8 +70,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 
 
+        User test_user;
         try{
-            userJpaRepo.save(User.builder()
+            test_user = userJpaRepo.save(User.builder()
                     .uid(testUserId)
                     .password(passwordEncoder.encode(testUserPassword))
                     .name("test user")
@@ -84,6 +92,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .build());
         }
         catch (Exception e){
+            test_user = userJpaRepo.findByUid("test-user@nanugi.ml").orElseThrow(CUserNotFoundException::new);
+        }
+
+        try{
+            Random random = new Random();
+
+            if(postJpaRepo.findAll().size() < 20){
+                for(int i=0;i<25; i++){
+                    postJpaRepo.save(Post.builder()
+                            .title("Testing Post " + (i+1))
+                            .content("This is just a random post passing by...")
+                            .chatUrl("http://openchat.com/1")
+                            .price(random.nextInt(50000) + 10000)
+                            .minParti(random.nextInt(3)+1)
+                            .maxParti(random.nextInt(10)+5)
+                            .user(test_user)
+                            .build());
+                    sleep(1000);
+                }
+            }
+        }
+        catch(Exception e){
 
         }
 

@@ -3,6 +3,7 @@ package com.nanugi.api.controller;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.entity.User;
+import com.nanugi.api.model.dto.PaginatedPostResponse;
 import com.nanugi.api.model.dto.PostResponse;
 import com.nanugi.api.model.dto.UserResponse;
 import com.nanugi.api.model.response.ListResult;
@@ -14,8 +15,6 @@ import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -37,19 +36,12 @@ public class PostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
-    @ApiOperation(value = "모든 글 조회", notes = "모든 글을 조회한다")
+    @ApiOperation(value = "모든 글 조회", notes = "모든 글을 조회한다 (기본 적으로 최신 순으로 정렬됩니다, 0페이지 부터 10개씩 보여줍니다.)")
     @GetMapping(value = "/posts")
-    public ListResult<PostResponse> findAllPosts(@ApiParam(value = "페이지", required = true) @RequestParam int page) {
-        List<Post> posts = postService.findAllPostsByPage(page);
+    public SingleResult<PaginatedPostResponse> findAllPosts(@ApiParam(value = "페이지", required = true) @RequestParam int page) {
+        PaginatedPostResponse paginatedPostResponse = postService.findAllPostsByPage(page);
 
-        List<PostResponse> res = posts.stream()
-                .map(p->new PostResponse(p.getBoard_id(),
-                        new UserResponse(p.getUser().getName(), p.getUser().getUid()),
-                        p.getTitle(), p.getContent(), p.getPrice(), p.getNanumPrice(),
-                        p.getChatUrl(), p.getMinParti(), p.getMaxParti()))
-                .collect(Collectors.toList());
-
-        return responseService.getListResult(res);
+        return responseService.getSingleResult(paginatedPostResponse);
     }
 
     @ApiImplicitParams({
@@ -78,7 +70,7 @@ public class PostController {
         Post savedPost = postService.save(post);
 
         return responseService.getSingleResult(new PostResponse(
-                savedPost.getBoard_id(),
+                savedPost.getPost_id(),
                 new UserResponse(user.getName(),user.getUid()),
                 savedPost.getTitle(),
                 savedPost.getContent(),
@@ -86,7 +78,8 @@ public class PostController {
                 savedPost.getNanumPrice(),
                 savedPost.getChatUrl(),
                 savedPost.getMinParti(),
-                savedPost.getMaxParti()
+                savedPost.getMaxParti(),
+                savedPost.getCreatedAt()
                 ));
 
     }

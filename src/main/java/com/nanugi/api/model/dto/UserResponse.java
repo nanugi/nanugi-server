@@ -1,14 +1,11 @@
 package com.nanugi.api.model.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class UserResponse {
     private String name;
     private String uid;
-
-    public UserResponse(String _name, String _uid){
-        name = _name;
-        uid = _uid;
-    }
 }

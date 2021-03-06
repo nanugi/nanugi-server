@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 public class UserController {
 
     private final UserJpaRepo userJpaRepo;
-    private final ResponseService responseService; // 결과를 처리할 Service
+    private final ResponseService responseService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
@@ -38,7 +38,8 @@ public class UserController {
         String id = authentication.getName();
 
         User user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
-        return responseService.getSingleResult(new UserResponse(user.getName(), user.getUid()));
+        return responseService.getSingleResult(
+                UserResponse.builder().name(user.getName()).uid(user.getUid()).build());
     }
 
     @ApiImplicitParams({
@@ -49,7 +50,8 @@ public class UserController {
     public SingleResult<UserResponse> findUser( @ApiParam(value = "회원번호", required = true) @PathVariable Long msrl) {
 
         User user = userJpaRepo.findById(msrl).orElseThrow(CUserNotFoundException::new);
-        return responseService.getSingleResult(new UserResponse(user.getName(), user.getUid()));
+        return responseService.getSingleResult(
+                UserResponse.builder().name(user.getName()).uid(user.getUid()).build());
     }
 
     @ApiImplicitParams({
@@ -66,7 +68,8 @@ public class UserController {
 
         user.setName(userPutRequest.getName());
         user = userJpaRepo.save(user);
-        return responseService.getSingleResult(new UserResponse(user.getName(), user.getUid()));
+        return responseService.getSingleResult(
+                UserResponse.builder().name(user.getName()).uid(user.getUid()).build());
     }
 
     @ApiImplicitParams({

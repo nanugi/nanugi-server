@@ -10,7 +10,6 @@ import com.nanugi.api.repo.UserJpaRepo;
 import com.nanugi.api.service.EmailSenderService;
 import com.nanugi.api.service.ResponseService;
 
-import com.nanugi.api.service.user.CustomUserDetailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,7 +24,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Random;
 
 @Api(tags = {"1. Sign"})
 @RequiredArgsConstructor
@@ -38,7 +36,6 @@ public class SignController {
     private final ResponseService responseService;
     private final PasswordEncoder passwordEncoder;
     private final EmailSenderService emailSenderService;
-    private final CustomUserDetailService customUserDetailService;
 
     @ApiOperation(value = "로그인", notes = "이메일 회원 로그인을 한다.")
     @PostMapping(value = "/signin")

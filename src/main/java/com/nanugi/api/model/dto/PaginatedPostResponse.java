@@ -17,5 +17,5 @@ public class PaginatedPostResponse {
     @Nullable
     private String next;
     private int size;
-    private List<PostResponse> posts = new ArrayList<>();
+    private List<PostResponse> posts;
 }

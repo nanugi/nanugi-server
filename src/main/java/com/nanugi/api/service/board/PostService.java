@@ -1,8 +1,11 @@
 package com.nanugi.api.service.board;
 
 import com.nanugi.api.advice.exception.BBoardNotFoundException;
+import com.nanugi.api.advice.exception.CResourceNotExistException;
+import com.nanugi.api.controller.PostController;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.PaginatedPostResponse;
+import com.nanugi.api.model.dto.PostRequest;
 import com.nanugi.api.model.dto.PostResponse;
 import com.nanugi.api.model.dto.UserResponse;
 import com.nanugi.api.repo.PostJpaRepo;
@@ -14,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,10 @@ public class PostService {
 
     public Post getPost(Long id){
         return postJpaRepo.findById(id).orElseThrow(BBoardNotFoundException::new);
+    }
+
+    public void deletePost(Long id){
+        postJpaRepo.deleteById(id);
     }
 
     public PaginatedPostResponse findAllPostsByPage(int page){
@@ -51,10 +57,17 @@ public class PostService {
         List<PostResponse> postResponses =
                 allPosts.getContent()
                         .stream()
-                        .map(p->(new PostResponse(p.getPost_id(),
-                                new UserResponse(p.getUser().getName(), p.getUser().getUid())
-                                , p.getTitle(), p.getContent(), p.getPrice(), p.getNanumPrice(),
-                                p.getChatUrl(), p.getMinParti(), p.getMaxParti(), p.getCreatedAt())))
+                        .map(p->(PostResponse.builder().post_id(p.getPost_id()).user(
+                                UserResponse.builder().name(p.getUser().getName()).uid(p.getUser().getUid()).build())
+                                .price(p.getPrice())
+                                .chatUrl(p.getChatUrl())
+                                .content(p.getContent())
+                                .maxParti(p.getMaxParti())
+                                .minParti(p.getMinParti())
+                                .createdAt(p.getCreatedAt())
+                                .nanumPrice(p.getNanumPrice())
+                                .title(p.getTitle())
+                                .build()))
                         .collect(Collectors.toList());
 
         PaginatedPostResponse paginatedPostResponse
@@ -67,5 +80,17 @@ public class PostService {
                 .build();
 
         return paginatedPostResponse;
+    }
+
+    public Post updatePost(Long post_id, PostRequest postRequest) {
+        Post post = postJpaRepo.findById(post_id).orElseThrow(CResourceNotExistException::new);
+        post.setContent(postRequest.getContent());
+        post.setChatUrl(postRequest.getChatUrl());
+        post.setMaxParti(postRequest.getMaxParti());
+        post.setMinParti(postRequest.getMinParti());
+        post.setPrice(postRequest.getTotalPrice());
+        post.setNanumPrice(postRequest.getNanumPrice());
+        post.setTitle(postRequest.getTitle());
+        return post;
     }
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserResponse {
+public class MemberResponse {
     private String name;
     private String uid;
 }

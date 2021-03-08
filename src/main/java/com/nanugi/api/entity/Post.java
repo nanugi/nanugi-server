@@ -18,9 +18,9 @@ public class Post extends TimeStampedEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long post_id;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class)
     @JoinColumn(name = "msrl")
-    private User user;
+    private Member user;
 
     @Column(nullable = false)
     private String title;
@@ -44,7 +44,7 @@ public class Post extends TimeStampedEntity {
     private String chatUrl;
 
     @Builder
-    public Post(User user, String title, String content, int price, int minParti, int maxParti, int nanumPrice, String chatUrl){
+    public Post(Member user, String title, String content, int price, int minParti, int maxParti, int nanumPrice, String chatUrl){
         this.user = user;
         this.title = title;
         this.content = content;
@@ -56,7 +56,7 @@ public class Post extends TimeStampedEntity {
     }
 
     @Builder
-    public Post(User user, String title, String content, int price, int minParti, int nanumPrice, String chatUrl){
+    public Post(Member user, String title, String content, int price, int minParti, int nanumPrice, String chatUrl){
         this.user = user;
         this.title = title;
         this.content = content;

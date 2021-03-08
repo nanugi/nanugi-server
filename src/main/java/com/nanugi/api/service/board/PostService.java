@@ -2,12 +2,11 @@ package com.nanugi.api.service.board;
 
 import com.nanugi.api.advice.exception.BBoardNotFoundException;
 import com.nanugi.api.advice.exception.CResourceNotExistException;
-import com.nanugi.api.controller.PostController;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.PaginatedPostResponse;
 import com.nanugi.api.model.dto.PostRequest;
 import com.nanugi.api.model.dto.PostResponse;
-import com.nanugi.api.model.dto.UserResponse;
+import com.nanugi.api.model.dto.MemberResponse;
 import com.nanugi.api.repo.PostJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -58,7 +57,7 @@ public class PostService {
                 allPosts.getContent()
                         .stream()
                         .map(p->(PostResponse.builder().post_id(p.getPost_id()).user(
-                                UserResponse.builder().name(p.getUser().getName()).uid(p.getUser().getUid()).build())
+                                MemberResponse.builder().name(p.getUser().getName()).uid(p.getUser().getUid()).build())
                                 .price(p.getPrice())
                                 .chatUrl(p.getChatUrl())
                                 .content(p.getContent())

@@ -3,33 +3,30 @@ package com.nanugi.api.controller;
 import com.nanugi.api.advice.exception.CNotOwnerException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Post;
-import com.nanugi.api.entity.User;
+import com.nanugi.api.entity.Member;
 import com.nanugi.api.model.dto.PaginatedPostResponse;
 import com.nanugi.api.model.dto.PostRequest;
 import com.nanugi.api.model.dto.PostResponse;
-import com.nanugi.api.model.dto.UserResponse;
+import com.nanugi.api.model.dto.MemberResponse;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.SingleResult;
-import com.nanugi.api.repo.UserJpaRepo;
+import com.nanugi.api.repo.MemberJpaRepo;
 import com.nanugi.api.service.ResponseService;
 import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 
 @Api(tags = {"3. Post"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/v1")
 public class PostController {
-    private final UserJpaRepo userJpaRepo;
+    private final MemberJpaRepo userJpaRepo;
     private final PostService postService;
     private final ResponseService responseService;
 
@@ -58,7 +55,7 @@ public class PostController {
                 .maxParti(post.getMaxParti())
                 .minParti(post.getMinParti())
                 .price(post.getPrice())
-                .user(UserResponse.builder().uid(post.getUser().getUid()).name(post.getUser().getName()).build())
+                .user(MemberResponse.builder().uid(post.getUser().getUid()).name(post.getUser().getName()).build())
                 .createdAt(post.getCreatedAt())
                 .nanumPrice(post.getNanumPrice())
                 .title(post.getTitle())
@@ -76,7 +73,7 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
-        User user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+        Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
         if(post.getUser().getMsrl() != user.getMsrl()){
@@ -98,7 +95,7 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
-        User user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+        Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
         if(post.getUser().getMsrl() != user.getMsrl()){
@@ -112,7 +109,7 @@ public class PostController {
                         .post_id(new_post.getPost_id())
                         .title(new_post.getTitle())
                         .content(new_post.getContent())
-                        .user(UserResponse.builder()
+                        .user(MemberResponse.builder()
                                 .uid(new_post.getUser().getUid())
                                 .name(new_post.getUser().getName())
                                 .build())
@@ -134,7 +131,7 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
-        User user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+        Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
 
         Post.PostBuilder postBuilder = Post.builder()
                 .title(postRequest.getTitle())
@@ -153,7 +150,7 @@ public class PostController {
         return responseService.getSingleResult(
                 PostResponse.builder()
                         .post_id(savedPost.getPost_id())
-                        .user(UserResponse.builder().name(user.getName()).uid(user.getUid()).build())
+                        .user(MemberResponse.builder().name(user.getName()).uid(user.getUid()).build())
                         .content(savedPost.getContent())
                         .price(savedPost.getPrice())
                         .chatUrl(savedPost.getChatUrl())

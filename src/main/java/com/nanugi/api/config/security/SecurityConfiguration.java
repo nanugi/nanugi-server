@@ -1,10 +1,10 @@
 package com.nanugi.api.config.security;
 
 import com.nanugi.api.advice.exception.CUserNotFoundException;
+import com.nanugi.api.entity.Member;
 import com.nanugi.api.entity.Post;
-import com.nanugi.api.entity.User;
 import com.nanugi.api.repo.PostJpaRepo;
-import com.nanugi.api.repo.UserJpaRepo;
+import com.nanugi.api.repo.MemberJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -36,7 +36,7 @@ import static java.lang.Thread.sleep;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserJpaRepo userJpaRepo;
+    private final MemberJpaRepo userJpaRepo;
     private final PostJpaRepo postJpaRepo;
     private final PasswordEncoder passwordEncoder;
 
@@ -96,9 +96,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // jwt token 필터를 id/password 인증 필터 전에 넣어라.
 
 
-        User test_user;
+        Member test_user;
         try{
-            test_user = userJpaRepo.save(User.builder()
+            test_user = userJpaRepo.save(Member.builder()
                     .uid(testUserId)
                     .password(passwordEncoder.encode(testUserPassword))
                     .name("test user")
@@ -108,7 +108,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .build());
 
 
-            userJpaRepo.save(User.builder()
+            userJpaRepo.save(Member.builder()
                     .uid(adminUserId)
                     .password(passwordEncoder.encode(adminUserPassword))
                     .name("admin user")

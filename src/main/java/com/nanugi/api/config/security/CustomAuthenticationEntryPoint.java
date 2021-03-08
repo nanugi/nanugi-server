@@ -14,6 +14,6 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException {
-        response.sendRedirect("/exception/entrypoint");
+        response.sendRedirect("https://api.nanugi.ml/exception/entrypoint");
     }
 }

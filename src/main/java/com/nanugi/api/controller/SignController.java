@@ -3,10 +3,10 @@ package com.nanugi.api.controller;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.nanugi.api.advice.exception.*;
 import com.nanugi.api.config.security.JwtTokenProvider;
-import com.nanugi.api.entity.User;
+import com.nanugi.api.entity.Member;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.SingleResult;
-import com.nanugi.api.repo.UserJpaRepo;
+import com.nanugi.api.repo.MemberJpaRepo;
 import com.nanugi.api.service.EmailSenderService;
 import com.nanugi.api.service.ResponseService;
 
@@ -31,7 +31,7 @@ import javax.validation.constraints.Pattern;
 @RequestMapping(value = "/v1")
 public class SignController {
 
-    private final UserJpaRepo userJpaRepo;
+    private final MemberJpaRepo userJpaRepo;
     private final JwtTokenProvider jwtTokenProvider;
     private final ResponseService responseService;
     private final PasswordEncoder passwordEncoder;
@@ -40,40 +40,40 @@ public class SignController {
     @ApiOperation(value = "로그인", notes = "이메일 회원 로그인을 한다.")
     @PostMapping(value = "/signin")
     public SingleResult<String> signin(
-            @ApiParam(value="이메일, 비밀번호", required=true) @RequestBody @Valid UserSigninRequest userSigninRequest) {
+            @ApiParam(value="이메일, 비밀번호", required=true) @RequestBody @Valid MemberSigninRequest memberSigninRequest) {
 
-        User user = userJpaRepo.findByUid(userSigninRequest.getId()).orElseThrow(CEmailSigninFailedException::new);
-        if (!passwordEncoder.matches(userSigninRequest.getPassword(), user.getPassword()))
+        Member member = userJpaRepo.findByUid(memberSigninRequest.getId()).orElseThrow(CEmailSigninFailedException::new);
+        if (!passwordEncoder.matches(memberSigninRequest.getPassword(), member.getPassword()))
             throw new CEmailSigninFailedException();
 
-        if(user.getIsVerified() == false){
+        if(member.getIsVerified() == false){
             throw new CEmailNotVerifiedException();
         }
 
-        return responseService.getSingleResult(jwtTokenProvider.createToken(String.valueOf(user.getMsrl()), user.getRoles()));
+        return responseService.getSingleResult(jwtTokenProvider.createToken(String.valueOf(member.getMsrl()), member.getRoles()));
     }
 
     @ApiOperation(value = "가입", notes = "회원가입을 한다.")
     @PostMapping(value = "/signup")
-    public CommonResult signup(@ApiParam(value = "회원ID : 학교 이메일 / 비밀번호 / 이름 ", required = true) @RequestBody @Valid UserSignupRequest userSignupRequest){
+    public CommonResult signup(@ApiParam(value = "회원ID : 학교 이메일 / 비밀번호 / 이름 ", required = true) @RequestBody @Valid MemberSignupRequest memberSignupRequest){
 
-        if (userJpaRepo.findByUid(userSignupRequest.getId()).isPresent()){
+        if (userJpaRepo.findByUid(memberSignupRequest.getId()).isPresent()){
             throw new CUserExistException();
         }
 
         String code = emailSenderService.getSecretCode();
 
         try{
-            emailSenderService.sendVerificationEmail(userSignupRequest.getId(), code);
+            emailSenderService.sendVerificationEmail(memberSignupRequest.getId(), code);
         }
         catch(UnirestException e){
             throw new CEmailSendFailException();
         }
 
-        userJpaRepo.save(User.builder()
-                .uid(userSignupRequest.getId())
-                .password(passwordEncoder.encode(userSignupRequest.getPassword()))
-                .name(userSignupRequest.getName())
+        userJpaRepo.save(Member.builder()
+                .uid(memberSignupRequest.getId())
+                .password(passwordEncoder.encode(memberSignupRequest.getPassword()))
+                .name(memberSignupRequest.getName())
                 .isVerified(false)
                 .verifyCode(code)
                 .certCode("")
@@ -86,7 +86,7 @@ public class SignController {
     @GetMapping(value="/email-verification")
     public CommonResult EmailVerification(@ApiParam(value = "이메일 인증 코드", required = true) @RequestParam String code){
 
-        User user = userJpaRepo.findByVerifyCode(code).orElseThrow(CUserNotFoundException::new);
+        Member user = userJpaRepo.findByVerifyCode(code).orElseThrow(CUserNotFoundException::new);
 
         user.setIsVerified(true);
         user.setVerifyCode("");
@@ -101,7 +101,7 @@ public class SignController {
     @PostMapping(value="/send-certcode")
     public CommonResult FindPassword(@ApiParam(value="회원 가입 시 이메일", required = true) @RequestBody CertRequest certRequest){
 
-        User user = userJpaRepo.findByUid(certRequest.getEmail()).orElseThrow(CUserNotFoundException::new);
+        Member user = userJpaRepo.findByUid(certRequest.getEmail()).orElseThrow(CUserNotFoundException::new);
         if(!user.getIsVerified()){
             throw new CEmailNotVerifiedException();
         }
@@ -125,7 +125,7 @@ public class SignController {
     @PostMapping(value="/set-new-password")
     public CommonResult SetNewPassword(@ApiParam(value="인증 코드", required = true) @Valid @RequestBody NewPassRequest newPassRequest){
 
-        User user = userJpaRepo.findByCertCode(newPassRequest.getCode()).orElseThrow(CUserNotFoundException::new);
+        Member user = userJpaRepo.findByCertCode(newPassRequest.getCode()).orElseThrow(CUserNotFoundException::new);
         user.setCertCode("");
 
         user.setPassword(passwordEncoder.encode(newPassRequest.getPassword()));
@@ -136,7 +136,7 @@ public class SignController {
 
     @Data
     @RequiredArgsConstructor
-    static class UserSigninRequest {
+    static class MemberSigninRequest {
 
         @NotNull @NotEmpty
         String id;
@@ -147,7 +147,7 @@ public class SignController {
 
     @Data
     @RequiredArgsConstructor
-    static class UserSignupRequest {
+    static class MemberSignupRequest {
 
         @NotNull @NotEmpty @Email @Pattern(regexp = "^.*((.ac.kr$)|(.edu$))", message = "학교 이메일을 입력해주세요.")
         String id;

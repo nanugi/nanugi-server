@@ -1,9 +1,12 @@
 package com.nanugi.api.service.board;
 
-import com.nanugi.api.advice.exception.BBoardNotFoundException;
 import com.nanugi.api.advice.exception.CResourceNotExistException;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.*;
+import com.nanugi.api.model.dto.post.PaginatedPostResponse;
+import com.nanugi.api.model.dto.post.PostNanumInfoResponse;
+import com.nanugi.api.model.dto.post.PostRequest;
+import com.nanugi.api.model.dto.post.PostResponse;
 import com.nanugi.api.repo.PostJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

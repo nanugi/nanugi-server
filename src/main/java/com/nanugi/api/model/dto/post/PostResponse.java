@@ -1,10 +1,10 @@
-package com.nanugi.api.model.dto;
+package com.nanugi.api.model.dto.post;
 
+import com.nanugi.api.model.dto.MemberResponse;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Builder
 @Data
@@ -17,5 +17,5 @@ public class PostResponse {
     private String content;
     private LocalDateTime createdAt;
 
-    private  PostNanumInfoResponse detail;
+    private PostNanumInfoResponse detail;
 }

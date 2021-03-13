@@ -1,4 +1,4 @@
-package com.nanugi.api.model.dto;
+package com.nanugi.api.model.dto.post;
 
 import lombok.Builder;
 import lombok.Data;

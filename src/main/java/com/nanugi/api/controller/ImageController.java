@@ -1,18 +1,14 @@
 package com.nanugi.api.controller;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
 import com.nanugi.api.advice.exception.*;
-import com.nanugi.api.config.security.JwtTokenProvider;
 import com.nanugi.api.entity.Image;
 import com.nanugi.api.entity.Member;
 import com.nanugi.api.entity.Post;
-import com.nanugi.api.model.dto.ImageResponse;
-import com.nanugi.api.model.dto.PhotoImagesResponse;
+import com.nanugi.api.model.dto.image.ImageResponse;
+import com.nanugi.api.model.dto.image.PostImageResponse;
 import com.nanugi.api.model.response.CommonResult;
-import com.nanugi.api.model.response.ListResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
-import com.nanugi.api.service.EmailSenderService;
 import com.nanugi.api.service.ResponseService;
 import com.nanugi.api.service.board.ImageService;
 import com.nanugi.api.service.board.PostService;
@@ -21,14 +17,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,7 +105,7 @@ public class ImageController {
     })
     @ApiOperation(value = "포스트에 해당하는 이미지 조회", notes = "포스트에 해당하는 모든 이미지를 조회한다")
     @GetMapping(value = "/posts/{postId}/images")
-    public SingleResult<PhotoImagesResponse> findImagesByPost(
+    public SingleResult<PostImageResponse> findImagesByPost(
             @ApiParam(value = "게시물 아이디 값", required = true) @PathVariable Long postId){
 
         List<ImageResponse> images = imageService.findImagesByPost(postId)
@@ -126,7 +116,7 @@ public class ImageController {
                         .caption(i.getCaption())
                         .build()).collect(Collectors.toList());
 
-        PhotoImagesResponse photoImagesResponse = PhotoImagesResponse.builder()
+        PostImageResponse photoImagesResponse = PostImageResponse.builder()
                 .count(images.size())
                 .images(images)
                 .build();

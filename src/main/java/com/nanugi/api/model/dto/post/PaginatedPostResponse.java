@@ -1,10 +1,8 @@
-package com.nanugi.api.model.dto;
+package com.nanugi.api.model.dto.post;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -12,9 +10,7 @@ import java.util.List;
 public class PaginatedPostResponse {
 
     private int page;
-    @Nullable
     private String previous;
-    @Nullable
     private String next;
     private int size;
     private List<PostResponse> posts;

@@ -4,21 +4,18 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Data
 public class PostResponse {
 
     private Long post_id;
+    private boolean is_close;
     private MemberResponse user;
     private String title;
     private String content;
-    private int price;
-
-    private int minParti;
-    private int maxParti;
-    private int nanumPrice;
-    private String chatUrl;
-
     private LocalDateTime createdAt;
+
+    private  PostNanumInfoResponse detail;
 }

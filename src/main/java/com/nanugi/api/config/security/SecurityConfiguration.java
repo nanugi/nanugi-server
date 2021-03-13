@@ -1,5 +1,6 @@
 package com.nanugi.api.config.security;
 
+import com.nanugi.api.advice.exception.CResourceNotExistException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Member;
 import com.nanugi.api.entity.Post;
@@ -121,7 +122,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             test_user = userJpaRepo.findByUid("test-user@nanugi.ml").orElseThrow(CUserNotFoundException::new);
         }
 
-        try{
             Random random = new Random();
 
             if(postJpaRepo.findAll().size() < 20){
@@ -133,15 +133,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                             .price(random.nextInt(50000) + 10000)
                             .minParti(random.nextInt(3)+1)
                             .maxParti(random.nextInt(10)+5)
-                            .user(test_user)
+                            .nanumPrice(random.nextInt(40000))
                             .build());
+                    Post post = postJpaRepo.findById(i+1L).orElseThrow(CResourceNotExistException::new);
+                    post.setUser(test_user);
+                    postJpaRepo.save(post);
                     sleep(1000);
                 }
             }
-        }
-        catch(Exception e){
-
-        }
 
     }
 

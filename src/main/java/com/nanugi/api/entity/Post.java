@@ -1,16 +1,17 @@
 package com.nanugi.api.entity;
 
 import com.nanugi.api.entity.common.TimeStampedEntity;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class Post extends TimeStampedEntity {
 
@@ -18,7 +19,16 @@ public class Post extends TimeStampedEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long post_id;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class)
+    @Column
+    @Builder.Default
+    private boolean is_close = false;
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId")
+    private List<Image> images= new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "msrl")
     private Member user;
 
@@ -42,27 +52,4 @@ public class Post extends TimeStampedEntity {
 
     @Column(nullable = false)
     private String chatUrl;
-
-    @Builder
-    public Post(Member user, String title, String content, int price, int minParti, int maxParti, int nanumPrice, String chatUrl){
-        this.user = user;
-        this.title = title;
-        this.content = content;
-        this.price = price;
-        this.maxParti = maxParti;
-        this.minParti = minParti;
-        this.nanumPrice = nanumPrice;
-        this.chatUrl = chatUrl;
-    }
-
-    @Builder
-    public Post(Member user, String title, String content, int price, int minParti, int nanumPrice, String chatUrl){
-        this.user = user;
-        this.title = title;
-        this.content = content;
-        this.price = price;
-        this.minParti = minParti;
-        this.nanumPrice = nanumPrice;
-        this.chatUrl = chatUrl;
-    }
 }

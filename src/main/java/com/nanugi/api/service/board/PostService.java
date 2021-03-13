@@ -3,10 +3,7 @@ package com.nanugi.api.service.board;
 import com.nanugi.api.advice.exception.BBoardNotFoundException;
 import com.nanugi.api.advice.exception.CResourceNotExistException;
 import com.nanugi.api.entity.Post;
-import com.nanugi.api.model.dto.PaginatedPostResponse;
-import com.nanugi.api.model.dto.PostRequest;
-import com.nanugi.api.model.dto.PostResponse;
-import com.nanugi.api.model.dto.MemberResponse;
+import com.nanugi.api.model.dto.*;
 import com.nanugi.api.repo.PostJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +28,7 @@ public class PostService {
     }
 
     public Post getPost(Long id){
-        return postJpaRepo.findById(id).orElseThrow(BBoardNotFoundException::new);
+        return postJpaRepo.findById(id).orElseThrow(CResourceNotExistException::new);
     }
 
     public void deletePost(Long id){
@@ -58,14 +55,17 @@ public class PostService {
                         .stream()
                         .map(p->(PostResponse.builder().post_id(p.getPost_id()).user(
                                 MemberResponse.builder().name(p.getUser().getName()).uid(p.getUser().getUid()).build())
-                                .price(p.getPrice())
-                                .chatUrl(p.getChatUrl())
+                                .detail(PostNanumInfoResponse.builder()
+                                        .price(p.getPrice())
+                                        .nanumPrice(p.getNanumPrice())
+                                        .maxParti(p.getMaxParti())
+                                        .minParti(p.getMinParti())
+                                        .chatUrl(p.getChatUrl())
+                                        .build())
                                 .content(p.getContent())
-                                .maxParti(p.getMaxParti())
-                                .minParti(p.getMinParti())
                                 .createdAt(p.getCreatedAt())
-                                .nanumPrice(p.getNanumPrice())
                                 .title(p.getTitle())
+                                .is_close(p.is_close())
                                 .build()))
                         .collect(Collectors.toList());
 

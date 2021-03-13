@@ -4,10 +4,7 @@ import com.nanugi.api.advice.exception.CNotOwnerException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.entity.Member;
-import com.nanugi.api.model.dto.PaginatedPostResponse;
-import com.nanugi.api.model.dto.PostRequest;
-import com.nanugi.api.model.dto.PostResponse;
-import com.nanugi.api.model.dto.MemberResponse;
+import com.nanugi.api.model.dto.*;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
@@ -51,14 +48,17 @@ public class PostController {
         PostResponse postResponse = PostResponse.builder()
                 .post_id(post.getPost_id())
                 .content(post.getContent())
-                .chatUrl(post.getChatUrl())
-                .maxParti(post.getMaxParti())
-                .minParti(post.getMinParti())
-                .price(post.getPrice())
+                .detail(PostNanumInfoResponse.builder()
+                        .price(post.getPrice())
+                        .nanumPrice(post.getNanumPrice())
+                        .maxParti(post.getMaxParti())
+                        .minParti(post.getMinParti())
+                        .chatUrl(post.getChatUrl())
+                        .build())
                 .user(MemberResponse.builder().uid(post.getUser().getUid()).name(post.getUser().getName()).build())
                 .createdAt(post.getCreatedAt())
-                .nanumPrice(post.getNanumPrice())
                 .title(post.getTitle())
+                .is_close(post.is_close())
                 .build();
 
         return responseService.getSingleResult(postResponse);
@@ -113,12 +113,55 @@ public class PostController {
                                 .uid(new_post.getUser().getUid())
                                 .name(new_post.getUser().getName())
                                 .build())
-                        .maxParti(new_post.getMaxParti())
-                        .minParti(new_post.getMinParti())
-                        .price(new_post.getPrice())
-                        .nanumPrice(new_post.getNanumPrice())
+                        .detail(PostNanumInfoResponse.builder()
+                                .price(new_post.getPrice())
+                                .nanumPrice(new_post.getNanumPrice())
+                                .maxParti(new_post.getMinParti())
+                                .minParti(new_post.getMinParti())
+                                .chatUrl(new_post.getChatUrl())
+                                .build())
                         .createdAt(new_post.getCreatedAt())
-                        .chatUrl(new_post.getChatUrl())
+                        .is_close(new_post.is_close())
+                        .build());
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
+    @ApiOperation(value = "나누기 종료", notes = "나눔 상태를 종료로 바꾼다")
+    @PutMapping(value = "/posts/{post_id}/close")
+    public SingleResult<PostResponse> updatePost(@ApiParam(value = "포스트 아이디", required = true) @PathVariable Long post_id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+
+        Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+        Post post = postService.getPost(post_id);
+
+        if(post.getUser().getMsrl() != user.getMsrl()){
+            throw new CNotOwnerException();
+        }
+
+        post.set_close(true);
+        Post new_post = postService.save(post);
+
+        return responseService.getSingleResult(
+                PostResponse.builder()
+                        .post_id(new_post.getPost_id())
+                        .title(new_post.getTitle())
+                        .content(new_post.getContent())
+                        .user(MemberResponse.builder()
+                                .uid(new_post.getUser().getUid())
+                                .name(new_post.getUser().getName())
+                                .build())
+                        .detail(PostNanumInfoResponse.builder()
+                                .price(new_post.getPrice())
+                                .nanumPrice(new_post.getNanumPrice())
+                                .maxParti(new_post.getMinParti())
+                                .minParti(new_post.getMinParti())
+                                .chatUrl(new_post.getChatUrl())
+                                .build())
+                        .createdAt(new_post.getCreatedAt())
+                        .is_close(new_post.is_close())
                         .build());
     }
 
@@ -152,13 +195,15 @@ public class PostController {
                         .post_id(savedPost.getPost_id())
                         .user(MemberResponse.builder().name(user.getName()).uid(user.getUid()).build())
                         .content(savedPost.getContent())
-                        .price(savedPost.getPrice())
-                        .chatUrl(savedPost.getChatUrl())
-                        .maxParti(savedPost.getMaxParti())
-                        .minParti(savedPost.getMinParti())
+                        .detail(PostNanumInfoResponse.builder()
+                                .price(savedPost.getPrice())
+                                .nanumPrice(savedPost.getNanumPrice())
+                                .minParti(savedPost.getMinParti())
+                                .maxParti(savedPost.getMaxParti())
+                                .chatUrl(savedPost.getChatUrl()).build())
                         .title(savedPost.getTitle())
+                        .is_close(savedPost.is_close())
                         .createdAt(savedPost.getCreatedAt())
-                        .nanumPrice(savedPost.getNanumPrice())
                         .build());
     }
 }

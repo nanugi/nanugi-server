@@ -20,9 +20,6 @@ public class Image {
     @Column(nullable = false)
     private String image_url;
 
-    @Column
-    private String caption;
-
     @Column(nullable = false)
     private Long postId;
 

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class ImageController {
     @PostMapping(value = "/posts/{postId}/images")
     public SingleResult<Image> addImage(
             @ApiParam(value = "게시물 아이디 값", required = true) @PathVariable Long postId,
-            @ApiParam(value = "이미지 정보", required = true) @RequestBody ImageRequest imageRequest){
+            @ApiParam(value = "이미지 파일", required = true) @RequestPart MultipartFile file){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
@@ -65,9 +66,10 @@ public class ImageController {
             throw new CNotOwnerException();
         }
 
+        System.out.println(file);
+
         Image image = Image.builder()
-                .image_url(imageRequest.getUrl())
-                .caption(imageRequest.getCaption())
+                .image_url(file.getOriginalFilename())
                 .postId(postId)
                 .build();
 
@@ -113,7 +115,6 @@ public class ImageController {
                 .map(i -> ImageResponse.builder()
                         .id(i.getImage_id())
                         .url(i.getImage_url())
-                        .caption(i.getCaption())
                         .build()).collect(Collectors.toList());
 
         PostImageResponse photoImagesResponse = PostImageResponse.builder()
@@ -122,11 +123,5 @@ public class ImageController {
                 .build();
 
         return responseService.getSingleResult(photoImagesResponse);
-    }
-
-    @Data
-    static class ImageRequest {
-        private String url;
-        private String caption;
     }
 }

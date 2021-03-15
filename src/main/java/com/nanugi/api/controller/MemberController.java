@@ -10,7 +10,6 @@ import com.nanugi.api.model.response.ListResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
 import com.nanugi.api.service.ResponseService;
-import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,6 @@ public class MemberController {
 
     private final MemberJpaRepo memberJpaRepo;
     private final ResponseService responseService;
-    private final PostService postService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")

@@ -10,10 +10,10 @@ import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
 import com.nanugi.api.service.ResponseService;
+import com.nanugi.api.service.S3Service;
 import com.nanugi.api.service.board.ImageService;
 import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +33,7 @@ public class ImageController {
     private final ImageService imageService;
     private final ResponseService responseService;
     private final PostService postService;
+    private final S3Service s3Service;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
@@ -66,10 +67,17 @@ public class ImageController {
             throw new CNotOwnerException();
         }
 
-        System.out.println(file);
+        String image_link = "";
+
+        try{
+            image_link = s3Service.upload(file, postId);
+        }
+        catch(Exception e){
+            throw new CCommunicationException();
+        }
 
         Image image = Image.builder()
-                .image_url(file.getOriginalFilename())
+                .image_url(image_link)
                 .postId(postId)
                 .build();
 

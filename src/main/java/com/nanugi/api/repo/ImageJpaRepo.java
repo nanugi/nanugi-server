@@ -1,7 +1,6 @@
 package com.nanugi.api.repo;
 
 import com.nanugi.api.entity.Image;
-import com.nanugi.api.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

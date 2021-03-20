@@ -3,10 +3,7 @@ package com.nanugi.api.service.board;
 import com.nanugi.api.advice.exception.CResourceNotExistException;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.*;
-import com.nanugi.api.model.dto.post.PaginatedPostResponse;
-import com.nanugi.api.model.dto.post.PostNanumInfoResponse;
-import com.nanugi.api.model.dto.post.PostRequest;
-import com.nanugi.api.model.dto.post.PostResponse;
+import com.nanugi.api.model.dto.post.*;
 import com.nanugi.api.repo.PostJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -53,22 +50,16 @@ public class PostService {
             next = "https://api.nanugi.ml/v1/posts/?page="+(page+1);
         }
 
-        List<PostResponse> postResponses =
+        List<PostListResponse> postResponses =
                 allPosts.getContent()
                         .stream()
-                        .map(p->(PostResponse.builder().post_id(p.getPost_id()).user(
-                                MemberResponse.builder().name(p.getUser().getName()).uid(p.getUser().getUid()).build())
-                                .detail(PostNanumInfoResponse.builder()
-                                        .price(p.getPrice())
-                                        .nanumPrice(p.getNanumPrice())
-                                        .maxParti(p.getMaxParti())
-                                        .minParti(p.getMinParti())
-                                        .chatUrl(p.getChatUrl())
-                                        .build())
-                                .content(p.getContent())
-                                .createdAt(p.getCreatedAt())
+                        .map(p->(PostListResponse.builder().post_id(p.getPost_id())
                                 .title(p.getTitle())
+                                .maxParti(p.getMaxParti())
+                                .minParti(p.getMinParti())
+                                .nanumPrice(p.getNanumPrice())
                                 .is_close(p.is_close())
+                                .thumbnail(p.getThumbnail())
                                 .build()))
                         .collect(Collectors.toList());
 

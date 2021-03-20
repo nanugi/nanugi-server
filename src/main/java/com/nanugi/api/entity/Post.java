@@ -52,4 +52,11 @@ public class Post extends TimeStampedEntity {
 
     @Column(nullable = false)
     private String chatUrl;
+
+    public String getThumbnail(){
+        if(images.size() > 0){
+            return images.get(0).getImage_url();
+        }
+        return null;
+    }
 }

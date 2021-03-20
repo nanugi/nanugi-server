@@ -12,15 +12,17 @@ import javax.validation.constraints.Pattern;
 @Data
 @Builder
 public class PostRequest {
-    @NotNull
-    @NotEmpty
-    @Length(max = 50)
+    @NotNull(message = "제목을 입력하세요")
+    @NotEmpty(message = "제목을 입력하세요")
+    @Length(max = 50, message = "제목은 50자 이내로 작성해야 합니다")
     private String title;
-    @NotNull @NotEmpty @Length(max = 800)
+
+    @NotNull(message = "내용을 입력하세요")
+    @NotEmpty(message = "내용을 입력하세요")
+    @Length(min = 10, message = "내용은 10자 이상 작성해야 합니다")
+    @Length(max = 800, message = "내용은 800자 이내로 작성해야 합니다")
     private String content;
-    @NotNull
     private int totalPrice;
-    @NotNull
     private int nanumPrice;
     @NotNull @Max(value = 10)
     private int minParti;

@@ -13,5 +13,5 @@ public class PaginatedPostResponse {
     private String previous;
     private String next;
     private int size;
-    private List<PostResponse> posts;
+    private List<PostListResponse> posts;
 }

@@ -1,10 +1,10 @@
 package com.nanugi.api.controller;
 
+import com.nanugi.api.advice.exception.CUserExistException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Member;
 import com.nanugi.api.model.dto.MemberResponse;
-import com.nanugi.api.model.dto.post.PostNanumInfoResponse;
-import com.nanugi.api.model.dto.post.PostResponse;
+import com.nanugi.api.model.dto.post.PostListResponse;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.ListResult;
 import com.nanugi.api.model.response.SingleResult;
@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Api(tags = {"2. Member(User)"})
@@ -44,7 +46,7 @@ public class MemberController {
 
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         return responseService.getSingleResult(
-                MemberResponse.builder().name(member.getName()).uid(member.getUid()).build());
+                MemberResponse.builder().nickname(member.getNickname()).uid(member.getUid()).build());
     }
 
     @ApiImplicitParams({
@@ -52,28 +54,19 @@ public class MemberController {
     })
     @ApiOperation(value = "내 나눔글 조회", notes = "내가 쓴 나눔글 목록을 조회한다")
     @GetMapping(value = "/users/me/myposts")
-    public ListResult<PostResponse> findMyPosts() {
+    public ListResult<PostListResponse> findMyPosts() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
-        List<PostResponse> myposts = member.getPosts().stream().map(p-> PostResponse.builder()
+        List<PostListResponse> myposts = member.getPosts().stream().map(p-> PostListResponse.builder()
                 .post_id(p.getPost_id())
                 .title(p.getTitle())
-                .content(p.getContent())
-                .createdAt(p.getCreatedAt())
-                .user(MemberResponse.builder()
-                        .name(member.getName())
-                        .uid(member.getUid())
-                        .build())
-                .detail(PostNanumInfoResponse.builder()
-                        .price(p.getPrice())
-                        .nanumPrice(p.getNanumPrice())
-                        .chatUrl(p.getChatUrl())
-                        .maxParti(p.getMaxParti())
-                        .minParti(p.getMinParti())
-                        .build())
+                .thumbnail(p.getThumbnail())
+                .nanumPrice(p.getNanumPrice())
+                .minParti(p.getMinParti())
+                .maxParti(p.getMaxParti())
                 .is_close(p.is_close())
                 .build()).collect(Collectors.toList());
 
@@ -89,7 +82,7 @@ public class MemberController {
 
         Member member = memberJpaRepo.findById(msrl).orElseThrow(CUserNotFoundException::new);
         return responseService.getSingleResult(
-                MemberResponse.builder().name(member.getName()).uid(member.getUid()).build());
+                MemberResponse.builder().nickname(member.getNickname()).uid(member.getBlindUid()).build());
     }
 
     @ApiImplicitParams({
@@ -98,16 +91,21 @@ public class MemberController {
     @ApiOperation(value = "회원 수정", notes = "회원정보를 수정한다")
     @PutMapping(value = "/user")
     public SingleResult<MemberResponse> modify(
-            @ApiParam(value = "회원이름", required = true) @Valid @RequestBody MemberPutRequest memberPutRequest) {
+            @ApiParam(value = "회원닉네임", required = true) @Valid @RequestBody MemberPutRequest memberPutRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
 
-        member.setName(memberPutRequest.getName());
+        Optional<Member> find = memberJpaRepo.findByNickname(memberPutRequest.getNickname());
+        if(find != null){
+            throw new CUserExistException();
+        }
+
+        member.setNickname(memberPutRequest.getNickname());
         member = memberJpaRepo.save(member);
         return responseService.getSingleResult(
-                MemberResponse.builder().name(member.getName()).uid(member.getUid()).build());
+                MemberResponse.builder().nickname(member.getNickname()).uid(member.getUid()).build());
     }
 
     @ApiImplicitParams({
@@ -129,7 +127,8 @@ public class MemberController {
     @RequiredArgsConstructor
     static class MemberPutRequest {
         @NotNull @NotEmpty
-        private String name;
+        @Size(max = 15, message = "닉네임은 최대 15자로 구성해야 합니다")
+        private String nickname;
     }
 }
 

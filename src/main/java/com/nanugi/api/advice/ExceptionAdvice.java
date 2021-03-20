@@ -101,6 +101,12 @@ public class ExceptionAdvice {
         return responseService.getFailResult(Integer.valueOf(getMessage("forbiddenWord.code")), getMessage("forbiddenWord.msg", new Object[]{e.getMessage()}));
     }
 
+    @ExceptionHandler(CNicknameAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult nicknameAlreadyExistsException(HttpServletRequest request, CNicknameAlreadyExistException e) {
+        return responseService.getFailResult(Integer.valueOf(getMessage("nicknameAlreadyExists.code")), getMessage("nicknameAlreadyExists.msg"));
+    }
+
     // code정보에 해당하는 메시지를 조회합니다.
     private String getMessage(String code) {
         return getMessage(code, null);

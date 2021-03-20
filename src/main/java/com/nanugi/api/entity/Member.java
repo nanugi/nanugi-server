@@ -33,8 +33,12 @@ public class Member extends TimeStampedEntity implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(length = 100)
     private String password;
-    @Column(nullable = false, length = 100)
+
+    @Column(nullable = false, length = 50)
     private String name;
+
+    @Column(nullable = false, length = 15, unique = true)
+    private String nickname;
 
     @Column(nullable = false)
     private String verifyCode;
@@ -63,6 +67,10 @@ public class Member extends TimeStampedEntity implements UserDetails {
 
     public void addRole(String role){
         roles.add(role);
+    }
+
+    public String getBlindUid(){
+        return uid.substring(0, 1) + "*****" + uid.substring(uid.indexOf("@"));
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

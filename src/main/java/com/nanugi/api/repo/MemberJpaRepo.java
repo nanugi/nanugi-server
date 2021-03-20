@@ -12,5 +12,7 @@ public interface MemberJpaRepo extends JpaRepository<Member, Long> {
 
     Optional<Member> findByCertCode(String code);
 
+    Optional<Member> findByNickname(String nickname);
+
     Member save(Member user);
 }

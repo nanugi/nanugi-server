@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
 
 @SpringBootTest
@@ -16,19 +17,8 @@ public class SignTest {
     MemberJpaRepo memberJpaRepo;
 
     @Test
+    @Rollback(value = true)
     void SingUpTest(){
-        Assertions.assertDoesNotThrow(()->{
-            Member member = Member.builder()
-                    .name("test-name")
-                    .uid("test-user2@nanugi.ml")
-                    .password("1234qwer")
-                    .build();
-
-            Member new_member = memberJpaRepo.save(member);
-
-            Assertions.assertEquals(member.getName(), new_member.getName());
-            Assertions.assertEquals(member.getUid(), new_member.getUid());
-        });
     }
 
     @Test

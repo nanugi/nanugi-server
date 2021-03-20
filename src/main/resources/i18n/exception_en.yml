@@ -34,3 +34,6 @@ emailSendFail:
 emailNotVerified:
   code: "-1010"
   msg: "email is not verified yet, please check your email box"
+nicknameAlreadyExists:
+  code: "-1011"
+  msg: "nickname already exists. Please try again"

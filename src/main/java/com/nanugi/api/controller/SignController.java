@@ -16,14 +16,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 @Api(tags = {"1. Sign"})
 @RequiredArgsConstructor
@@ -61,6 +59,10 @@ public class SignController {
             throw new CUserExistException();
         }
 
+        if (userJpaRepo.findByNickname(memberSignupRequest.getNickname()).isPresent()){
+            throw new CNicknameAlreadyExistException();
+        }
+
         String code = emailSenderService.getSecretCode();
 
         try{
@@ -74,6 +76,7 @@ public class SignController {
                 .uid(memberSignupRequest.getId())
                 .password(passwordEncoder.encode(memberSignupRequest.getPassword()))
                 .name(memberSignupRequest.getName())
+                .nickname(memberSignupRequest.getNickname())
                 .isVerified(false)
                 .verifyCode(code)
                 .certCode("")
@@ -152,11 +155,16 @@ public class SignController {
         @NotNull @NotEmpty @Email @Pattern(regexp = "^.*((.ac.kr$)|(.edu$))", message = "학교 이메일을 입력해주세요.")
         String id;
 
-        @NotNull @NotEmpty
+        @NotNull @NotEmpty @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "최소 8자, 최소 하나의 문자와 숫자 조합으로 비밀번호를 만드세요")
         String password;
 
-        @NotNull @NotEmpty
+        @NotNull @NotEmpty @Size(max = 50, message = "이름이 너무 깁니다")
         String name;
+
+        @NotNull
+        @NotEmpty
+        @Size(max = 15, message = "닉네임을 15자 이하로 입력하세요")
+        String nickname;
     }
 
     @Data

@@ -89,6 +89,22 @@ public class EmailSenderService {
         return request.getBody();
     }
 
+    public JsonNode sendCsEmail(String email, String phone_number, String content) throws UnirestException {
+
+        HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
+                .basicAuth("api", API_KEY)
+                .field("from", "나누기 고객센터 <no-reply@nanugi.ml>")
+                .field("to", "division.foreveryoung@gmail.com")
+                .field("subject", "[나누기 새로운 고객문의] 새로운 고객문의 알림입니다.")
+                .field("text",
+                        "연락처 : " + email + "/" + phone_number + "\n"
+                        + content
+                )
+                .asJson();
+
+        return request.getBody();
+    }
+
     public String getSecretCode(){
         Random random = new Random();
         String code = "";

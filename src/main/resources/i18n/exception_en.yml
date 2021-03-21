@@ -37,3 +37,6 @@ emailNotVerified:
 nicknameAlreadyExists:
   code: "-1011"
   msg: "nickname already exists. Please try again"
+tooManyImages:
+  code: "-1012"
+  msg: "post cannot have more than 5 images"

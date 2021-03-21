@@ -9,8 +9,8 @@ import com.nanugi.api.model.dto.image.PostImageResponse;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
+import com.nanugi.api.service.AsyncSaveService;
 import com.nanugi.api.service.ResponseService;
-import com.nanugi.api.service.S3Service;
 import com.nanugi.api.service.board.ImageService;
 import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
@@ -33,7 +33,7 @@ public class ImageController {
     private final ImageService imageService;
     private final ResponseService responseService;
     private final PostService postService;
-    private final S3Service s3Service;
+    private final AsyncSaveService asyncSaveService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
@@ -53,7 +53,7 @@ public class ImageController {
     })
     @ApiOperation(value = "이미지 추가", notes = "포스트에 이미지를 추가한다")
     @PostMapping(value = "/posts/{postId}/images")
-    public SingleResult<Image> addImage(
+    public CommonResult addImage(
             @ApiParam(value = "게시물 아이디 값", required = true) @PathVariable Long postId,
             @ApiParam(value = "이미지 파일", required = true) @RequestPart MultipartFile file){
 
@@ -67,23 +67,13 @@ public class ImageController {
             throw new CNotOwnerException();
         }
 
-        String image_link = "";
-
-        try{
-            image_link = s3Service.upload(file, postId);
-        }
-        catch(Exception e){
-            throw new CCommunicationException();
+        if(post.getImages().size() >= 5){
+            throw new CTooManyImagesException();
         }
 
-        Image image = Image.builder()
-                .image_url(image_link)
-                .postId(postId)
-                .build();
+        asyncSaveService.uploadAndSaveImage(file, postId);
 
-        imageService.save(image);
-
-        return responseService.getSingleResult(image);
+        return responseService.getSuccessResult();
     }
 
     @ApiImplicitParams({

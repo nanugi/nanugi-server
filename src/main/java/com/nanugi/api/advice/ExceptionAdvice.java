@@ -107,6 +107,12 @@ public class ExceptionAdvice {
         return responseService.getFailResult(Integer.valueOf(getMessage("nicknameAlreadyExists.code")), getMessage("nicknameAlreadyExists.msg"));
     }
 
+    @ExceptionHandler(CTooManyImagesException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public CommonResult nicknameAlreadyExistsException(HttpServletRequest request, CTooManyImagesException e) {
+        return responseService.getFailResult(Integer.valueOf(getMessage("tooManyImages.code")), getMessage("tooManyImages.msg"));
+    }
+
     // code정보에 해당하는 메시지를 조회합니다.
     private String getMessage(String code) {
         return getMessage(code, null);

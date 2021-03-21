@@ -37,3 +37,6 @@ emailNotVerified:
 nicknameAlreadyExists:
   code: "-1011"
   msg: "이미 존재하는 닉네임입니다."
+tooManyImages:
+  code: "-1012"
+  msg: "한 게시물에는 최대 5개의 이미지만 업로드할 수 있습니다"

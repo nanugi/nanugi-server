@@ -1,14 +1,14 @@
 package com.nanugi.api.controller;
 
 import com.nanugi.api.advice.exception.CEmailSendFailException;
-import com.nanugi.api.advice.exception.CUserNotFoundException;
-import com.nanugi.api.entity.Member;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.service.EmailSenderService;
 import com.nanugi.api.service.ResponseService;
 import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,9 +29,11 @@ public class CsController {
     @ApiOperation(value="고객 문의", notes="문의 사항 접수 후 나누기 지메일로 해당 문의를 보냅니다. 주의사항 : 연락받을 이메일, 핸드폰 번호(000-0000-0000 형식)가 필요합니다.")
     @PostMapping(value="/cs/new")
     public CommonResult SendCsEmail(@ApiParam(value = "이메일 인증 코드", required = true) @Valid @RequestBody CsRequest csRequest){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
 
         try {
-            emailSenderService.sendCsEmail(csRequest.getEmail(), csRequest.getPhone_number(), csRequest.getContent());
+            emailSenderService.sendCsEmail(id, csRequest.getEmail(), csRequest.getPhone_number(), csRequest.getContent());
         }
         catch(Exception e){
             throw new CEmailSendFailException();

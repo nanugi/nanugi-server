@@ -6,6 +6,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -25,6 +26,7 @@ public class EmailSenderService {
 
     private String URL = "https://nanugi.github.io/nanugi-web/emailVerification/";
 
+    @Async
     public JsonNode sendVerificationEmail(String to, String code) throws UnirestException {
 
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
@@ -58,6 +60,7 @@ public class EmailSenderService {
         return request.getBody();
     }
 
+    @Async
     public JsonNode sendCertifyEmail(String to, String code) throws UnirestException {
 
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
@@ -89,7 +92,8 @@ public class EmailSenderService {
         return request.getBody();
     }
 
-    public JsonNode sendCsEmail(String email, String phone_number, String content) throws UnirestException {
+    @Async
+    public JsonNode sendCsEmail(String id, String email, String phone_number, String content) throws UnirestException {
 
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
                 .basicAuth("api", API_KEY)
@@ -97,8 +101,9 @@ public class EmailSenderService {
                 .field("to", "division.foreveryoung@gmail.com")
                 .field("subject", "[나누기 새로운 고객문의] 새로운 고객문의 알림입니다.")
                 .field("text",
-                        "연락처 : " + email + "/" + phone_number + "\n"
-                        + content
+                        "보낸이의 나누기 아이디 : " + id + "\n" +
+                        "답변 받을 연락처 : " + email + " / " + phone_number + "\n"
+                        + "문의 내용 : [" + content + "]\n"
                 )
                 .asJson();
 

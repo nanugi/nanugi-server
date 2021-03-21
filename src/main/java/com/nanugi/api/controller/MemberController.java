@@ -4,12 +4,14 @@ import com.nanugi.api.advice.exception.CUserExistException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Member;
 import com.nanugi.api.model.dto.MemberResponse;
+import com.nanugi.api.model.dto.post.PaginatedPostResponse;
 import com.nanugi.api.model.dto.post.PostListResponse;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.ListResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
 import com.nanugi.api.service.ResponseService;
+import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 public class MemberController {
 
     private final MemberJpaRepo memberJpaRepo;
+    private final PostService postService;
     private final ResponseService responseService;
 
     @ApiImplicitParams({
@@ -54,23 +57,16 @@ public class MemberController {
     })
     @ApiOperation(value = "내 나눔글 조회", notes = "내가 쓴 나눔글 목록을 조회한다")
     @GetMapping(value = "/users/me/myposts")
-    public ListResult<PostListResponse> findMyPosts() {
+    public SingleResult<PaginatedPostResponse> findMyPosts(@ApiParam(value = "페이지", required = true) @RequestParam int page) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
-        List<PostListResponse> myposts = member.getPosts().stream().map(p-> PostListResponse.builder()
-                .post_id(p.getPost_id())
-                .title(p.getTitle())
-                .thumbnail(p.getThumbnail())
-                .nanumPrice(p.getNanumPrice())
-                .minParti(p.getMinParti())
-                .maxParti(p.getMaxParti())
-                .is_close(p.is_close())
-                .build()).collect(Collectors.toList());
 
-        return responseService.getListResult(myposts);
+        PaginatedPostResponse myposts = postService.findAllPostsByPageAndMemberId(page, member.getMsrl());
+
+        return responseService.getSingleResult(myposts);
     }
 
     @ApiImplicitParams({

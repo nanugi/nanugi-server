@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,5 +26,4 @@ public class ImageService {
         imageJpaRepo.deleteById(id);
     }
 
-    public List<Image> findImagesByPost(Long post_id) {return imageJpaRepo.findAllByPostId(post_id);}
 }

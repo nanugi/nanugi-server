@@ -4,9 +4,7 @@ import com.nanugi.api.advice.exception.CNotOwnerException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.entity.Member;
-import com.nanugi.api.model.dto.*;
 import com.nanugi.api.model.dto.post.PaginatedPostResponse;
-import com.nanugi.api.model.dto.post.PostNanumInfoResponse;
 import com.nanugi.api.model.dto.post.PostRequest;
 import com.nanugi.api.model.dto.post.PostResponse;
 import com.nanugi.api.model.response.CommonResult;
@@ -49,23 +47,8 @@ public class PostController {
     @GetMapping(value = "/posts/{id}")
     public SingleResult<PostResponse> findPost(@ApiParam(value = "포스트 아이디", required = true) @PathVariable Long id) {
         Post post = postService.getPost(id);
-        PostResponse postResponse = PostResponse.builder()
-                .post_id(post.getPost_id())
-                .content(post.getContent())
-                .detail(PostNanumInfoResponse.builder()
-                        .price(post.getPrice())
-                        .nanumPrice(post.getNanumPrice())
-                        .maxParti(post.getMaxParti())
-                        .minParti(post.getMinParti())
-                        .chatUrl(post.getChatUrl())
-                        .build())
-                .user(MemberResponse.builder().uid(post.getUser().getBlindUid()).nickname(post.getUser().getNickname()).build())
-                .createdAt(post.getCreatedAt())
-                .title(post.getTitle())
-                .is_close(post.is_close())
-                .build();
 
-        return responseService.getSingleResult(postResponse);
+        return responseService.getSingleResult(post.toPostResponse());
     }
 
     @ApiImplicitParams({
@@ -108,25 +91,7 @@ public class PostController {
 
         Post new_post = postService.updatePost(post_id, postRequest);
 
-        return responseService.getSingleResult(
-                PostResponse.builder()
-                        .post_id(new_post.getPost_id())
-                        .title(new_post.getTitle())
-                        .content(new_post.getContent())
-                        .user(MemberResponse.builder()
-                                .uid(new_post.getUser().getBlindUid())
-                                .nickname(new_post.getUser().getNickname())
-                                .build())
-                        .detail(PostNanumInfoResponse.builder()
-                                .price(new_post.getPrice())
-                                .nanumPrice(new_post.getNanumPrice())
-                                .maxParti(new_post.getMinParti())
-                                .minParti(new_post.getMinParti())
-                                .chatUrl(new_post.getChatUrl())
-                                .build())
-                        .createdAt(new_post.getCreatedAt())
-                        .is_close(new_post.is_close())
-                        .build());
+        return responseService.getSingleResult(new_post.toPostResponse());
     }
 
     @ApiImplicitParams({
@@ -148,25 +113,7 @@ public class PostController {
         post.set_close(true);
         Post new_post = postService.save(post);
 
-        return responseService.getSingleResult(
-                PostResponse.builder()
-                        .post_id(new_post.getPost_id())
-                        .title(new_post.getTitle())
-                        .content(new_post.getContent())
-                        .user(MemberResponse.builder()
-                                .uid(new_post.getUser().getBlindUid())
-                                .nickname(new_post.getUser().getNickname())
-                                .build())
-                        .detail(PostNanumInfoResponse.builder()
-                                .price(new_post.getPrice())
-                                .nanumPrice(new_post.getNanumPrice())
-                                .maxParti(new_post.getMinParti())
-                                .minParti(new_post.getMinParti())
-                                .chatUrl(new_post.getChatUrl())
-                                .build())
-                        .createdAt(new_post.getCreatedAt())
-                        .is_close(new_post.is_close())
-                        .build());
+        return responseService.getSingleResult(new_post.toPostResponse());
     }
 
     @ApiImplicitParams({
@@ -180,34 +127,10 @@ public class PostController {
 
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
 
-        Post.PostBuilder postBuilder = Post.builder()
-                .title(postRequest.getTitle())
-                .content(postRequest.getContent())
-                .chatUrl(postRequest.getChatUrl())
-                .minParti(postRequest.getMinParti())
-                .maxParti(postRequest.getMaxParti())
-                .price(postRequest.getTotalPrice())
-                .user(user)
-                .nanumPrice(postRequest.getNanumPrice());
-
-        Post post = postBuilder.build();
+        Post post = Post.build(user, postRequest.getTitle(), postRequest.getContent(), postRequest.getNanumPrice(), postRequest.getTotalPrice(), postRequest.getMaxParti(), postRequest.getMinParti(), postRequest.getChatUrl());
 
         Post savedPost = postService.save(post);
 
-        return responseService.getSingleResult(
-                PostResponse.builder()
-                        .post_id(savedPost.getPost_id())
-                        .user(MemberResponse.builder().nickname(user.getNickname()).uid(user.getBlindUid()).build())
-                        .content(savedPost.getContent())
-                        .detail(PostNanumInfoResponse.builder()
-                                .price(savedPost.getPrice())
-                                .nanumPrice(savedPost.getNanumPrice())
-                                .minParti(savedPost.getMinParti())
-                                .maxParti(savedPost.getMaxParti())
-                                .chatUrl(savedPost.getChatUrl()).build())
-                        .title(savedPost.getTitle())
-                        .is_close(savedPost.is_close())
-                        .createdAt(savedPost.getCreatedAt())
-                        .build());
+        return responseService.getSingleResult(savedPost.toPostResponse());
     }
 }

@@ -1,11 +1,16 @@
 package com.nanugi.api.entity;
 
 import com.nanugi.api.entity.common.TimeStampedEntity;
+import com.nanugi.api.model.dto.image.PostImageResponse;
+import com.nanugi.api.model.dto.post.PostListResponse;
+import com.nanugi.api.model.dto.post.PostNanumInfoResponse;
+import com.nanugi.api.model.dto.post.PostResponse;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -58,5 +63,62 @@ public class Post extends TimeStampedEntity {
             return images.get(0).getImage_url();
         }
         return null;
+    }
+
+    public PostNanumInfoResponse toPostNanumInfoResponse(){
+        return PostNanumInfoResponse.builder()
+                .price(price)
+                .nanumPrice(nanumPrice)
+                .chatUrl(chatUrl)
+                .minParti(minParti)
+                .maxParti(maxParti)
+                .build();
+    }
+
+    public PostResponse toPostResponse(){
+        return PostResponse.builder()
+                .is_close(is_close)
+                .detail(toPostNanumInfoResponse())
+                .createdAt(getCreatedAt())
+                .user(user.toBlindMemberResponse())
+                .title(title)
+                .content(content)
+                .post_id(post_id)
+                .build();
+    }
+
+    public PostListResponse toPostListResponse(){
+        return PostListResponse.builder()
+                .post_id(post_id)
+                .maxParti(maxParti)
+                .minParti(minParti)
+                .nanumPrice(nanumPrice)
+                .thumbnail(getThumbnail())
+                .is_close(is_close)
+                .title(title)
+                .build();
+    }
+
+    public PostImageResponse toPostImageResponse(){
+        return PostImageResponse.builder()
+                .count(images.size())
+                .images(images.stream()
+                        .map(i -> i.toImageResponse())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public static Post build(Member user, String title, String content, int nanumPrice, int price, int maxParti, int minParti, String chatUrl){
+        return Post.builder()
+                .user(user)
+                .nanumPrice(nanumPrice)
+                .maxParti(maxParti)
+                .minParti(minParti)
+                .chatUrl(chatUrl)
+                .price(price)
+                .content(content)
+                .title(title)
+                .is_close(false)
+                .build();
     }
 }

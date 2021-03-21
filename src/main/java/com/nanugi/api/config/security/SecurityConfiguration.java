@@ -1,6 +1,5 @@
 package com.nanugi.api.config.security;
 
-import com.nanugi.api.advice.exception.CResourceNotExistException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Member;
 import com.nanugi.api.entity.Post;
@@ -26,7 +25,6 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.util.Collections;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
@@ -99,26 +97,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         Member test_user;
         try{
-            test_user = userJpaRepo.save(Member.builder()
-                    .uid(testUserId)
-                    .password(passwordEncoder.encode(testUserPassword))
-                    .name("test user")
-                    .nickname("나누기")
-                    .isVerified(true)
-                    .verifyCode("")
-                    .roles(Collections.singletonList("ROLE_USER"))
-                    .build());
 
+            test_user = Member
+                    .build(testUserId,
+                            "testuser",
+                            "나누기",
+                            "",
+                            passwordEncoder.encode(testUserPassword));
+            test_user.addRole("ROLE_USER");
+            userJpaRepo.save(test_user);
 
-            userJpaRepo.save(Member.builder()
-                    .uid(adminUserId)
-                    .password(passwordEncoder.encode(adminUserPassword))
-                    .name("admin user")
-                    .nickname("관리자")
-                    .isVerified(true)
-                    .verifyCode("")
-                    .roles(Collections.singletonList("ROLE_ADMIN"))
-                    .build());
+            Member admin_user = Member.build(adminUserId, "adminuser", "관리자", "", passwordEncoder.encode(adminUserPassword));
+            admin_user.addRole("ADMIN_USER");
+            userJpaRepo.save(admin_user);
         }
         catch (Exception e){
             test_user = userJpaRepo.findByUid("test-user@nanugi.ml").orElseThrow(CUserNotFoundException::new);
@@ -128,17 +119,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
             if(postJpaRepo.findAll().size() < 20){
                 for(int i=0;i<25; i++){
-                    postJpaRepo.save(Post.builder()
-                            .title("Testing Post " + (i+1))
-                            .content("This is just a random post passing by...")
-                            .chatUrl("http://openchat.com/1")
-                            .price(random.nextInt(50000) + 10000)
-                            .minParti(random.nextInt(3)+1)
-                            .maxParti(random.nextInt(10)+5)
-                            .nanumPrice(random.nextInt(40000))
-                            .build());
-                    Post post = postJpaRepo.findById(i+1L).orElseThrow(CResourceNotExistException::new);
-                    post.setUser(test_user);
+                    Post post = Post.build(test_user,
+                            "Testing Post " + (i+1),
+                            "This is just a random post passing by...",
+                            random.nextInt(40000),
+                            random.nextInt(50000) + 10000,
+                            random.nextInt(10)+5,
+                            random.nextInt(3)+1,
+                            "http://openchat.com/1");
                     postJpaRepo.save(post);
                     sleep(1000);
                 }

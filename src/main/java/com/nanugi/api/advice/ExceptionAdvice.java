@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
 import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
@@ -111,6 +113,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public CommonResult nicknameAlreadyExistsException(HttpServletRequest request, CTooManyImagesException e) {
         return responseService.getFailResult(Integer.valueOf(getMessage("tooManyImages.code")), getMessage("tooManyImages.msg"));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult maxUploadSizeExceededException(HttpServletRequest request, MaxUploadSizeExceededException e){
+        return responseService.getFailResult(-9999, "3MB 이하의 이미지만 업로드할 수 있습니다");
     }
 
     // code정보에 해당하는 메시지를 조회합니다.

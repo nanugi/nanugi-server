@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,15 +71,13 @@ public class SignController {
             throw new CEmailSendFailException();
         }
 
-        userJpaRepo.save(Member.builder()
-                .uid(memberSignupRequest.getId())
-                .password(passwordEncoder.encode(memberSignupRequest.getPassword()))
-                .name(memberSignupRequest.getName())
-                .nickname(memberSignupRequest.getNickname())
-                .isVerified(false)
-                .verifyCode(code)
-                .certCode("")
-                .build());
+        userJpaRepo.save(Member
+                .build(
+                        memberSignupRequest.getId(),
+                        memberSignupRequest.getName(),
+                        memberSignupRequest.getNickname(),
+                        code,
+                        passwordEncoder.encode(memberSignupRequest.getPassword())));
 
         return responseService.getSuccessResult();
     }

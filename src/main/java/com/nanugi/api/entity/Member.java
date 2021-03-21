@@ -3,6 +3,7 @@ package com.nanugi.api.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nanugi.api.entity.common.TimeStampedEntity;
+import com.nanugi.api.model.dto.MemberResponse;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 import org.springframework.security.core.GrantedAuthority;
@@ -101,5 +102,30 @@ public class Member extends TimeStampedEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public MemberResponse toBlindMemberResponse(){
+        return MemberResponse.builder()
+                .uid(getBlindUid())
+                .nickname(nickname)
+                .build();
+    }
+
+    public MemberResponse toMemberResponse(){
+        return MemberResponse.builder()
+                .uid(uid)
+                .nickname(nickname)
+                .build();
+    }
+
+    public static Member build(String uid, String name, String nickname, String verifyCode, String encodedPassword){
+        return Member.builder()
+                .uid(uid)
+                .name(name)
+                .nickname(nickname)
+                .password(encodedPassword)
+                .isVerified(false)
+                .verifyCode(verifyCode)
+                .build();
     }
 }

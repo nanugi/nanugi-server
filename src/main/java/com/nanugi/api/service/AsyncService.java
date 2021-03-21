@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
-public class AsyncSaveService {
+public class AsyncService {
 
     private final S3Service s3Service;
     private final ImageService imageService;
@@ -24,10 +24,7 @@ public class AsyncSaveService {
 
         try{
             image_link = s3Service.upload(file, postId);
-            Image image = Image.builder()
-                    .image_url(image_link)
-                    .postId(postId)
-                    .build();
+            Image image = Image.build(postId, image_link);
 
             imageService.save(image);
         }

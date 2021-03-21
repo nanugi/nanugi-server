@@ -1,13 +1,11 @@
 package com.nanugi.api.controller;
 
-import com.nanugi.api.advice.exception.CUserExistException;
+import com.nanugi.api.advice.exception.CNicknameAlreadyExistException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Member;
 import com.nanugi.api.model.dto.MemberResponse;
 import com.nanugi.api.model.dto.post.PaginatedPostResponse;
-import com.nanugi.api.model.dto.post.PostListResponse;
 import com.nanugi.api.model.response.CommonResult;
-import com.nanugi.api.model.response.ListResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
 import com.nanugi.api.service.ResponseService;
@@ -23,9 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Api(tags = {"2. Member(User)"})
 @RequiredArgsConstructor
@@ -48,8 +44,7 @@ public class MemberController {
         String id = authentication.getName();
 
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
-        return responseService.getSingleResult(
-                MemberResponse.builder().nickname(member.getNickname()).uid(member.getUid()).build());
+        return responseService.getSingleResult(member.toMemberResponse());
     }
 
     @ApiImplicitParams({
@@ -77,8 +72,7 @@ public class MemberController {
     public SingleResult<MemberResponse> fimdMember(@ApiParam(value = "회원번호", required = true) @PathVariable Long msrl) {
 
         Member member = memberJpaRepo.findById(msrl).orElseThrow(CUserNotFoundException::new);
-        return responseService.getSingleResult(
-                MemberResponse.builder().nickname(member.getNickname()).uid(member.getBlindUid()).build());
+        return responseService.getSingleResult(member.toBlindMemberResponse());
     }
 
     @ApiImplicitParams({
@@ -94,14 +88,13 @@ public class MemberController {
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
 
         Optional<Member> find = memberJpaRepo.findByNickname(memberPutRequest.getNickname());
-        if(find != null){
-            throw new CUserExistException();
+        if(find.isPresent()){
+            throw new CNicknameAlreadyExistException();
         }
 
         member.setNickname(memberPutRequest.getNickname());
         member = memberJpaRepo.save(member);
-        return responseService.getSingleResult(
-                MemberResponse.builder().nickname(member.getNickname()).uid(member.getUid()).build());
+        return responseService.getSingleResult(member.toMemberResponse());
     }
 
     @ApiImplicitParams({

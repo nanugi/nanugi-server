@@ -52,14 +52,7 @@ public class PostService {
         List<PostListResponse> postResponses =
                 allPosts.getContent()
                         .stream()
-                        .map(p->(PostListResponse.builder().post_id(p.getPost_id())
-                                .title(p.getTitle())
-                                .maxParti(p.getMaxParti())
-                                .minParti(p.getMinParti())
-                                .nanumPrice(p.getNanumPrice())
-                                .is_close(p.is_close())
-                                .thumbnail(p.getThumbnail())
-                                .build()))
+                        .map(p->p.toPostListResponse())
                         .collect(Collectors.toList());
 
         PaginatedPostResponse paginatedPostResponse
@@ -92,14 +85,7 @@ public class PostService {
         List<PostListResponse> postResponses =
                 allPosts.getContent()
                         .stream()
-                        .map(p->(PostListResponse.builder().post_id(p.getPost_id())
-                                .title(p.getTitle())
-                                .maxParti(p.getMaxParti())
-                                .minParti(p.getMinParti())
-                                .nanumPrice(p.getNanumPrice())
-                                .is_close(p.is_close())
-                                .thumbnail(p.getThumbnail())
-                                .build()))
+                        .map(p->p.toPostListResponse())
                         .collect(Collectors.toList());
 
         PaginatedPostResponse paginatedPostResponse

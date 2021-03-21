@@ -9,7 +9,7 @@ import com.nanugi.api.model.dto.image.PostImageResponse;
 import com.nanugi.api.model.response.CommonResult;
 import com.nanugi.api.model.response.SingleResult;
 import com.nanugi.api.repo.MemberJpaRepo;
-import com.nanugi.api.service.AsyncSaveService;
+import com.nanugi.api.service.AsyncService;
 import com.nanugi.api.service.ResponseService;
 import com.nanugi.api.service.board.ImageService;
 import com.nanugi.api.service.board.PostService;
@@ -19,9 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(tags = {"4. Image"})
 @RequiredArgsConstructor
@@ -33,19 +30,19 @@ public class ImageController {
     private final ImageService imageService;
     private final ResponseService responseService;
     private final PostService postService;
-    private final AsyncSaveService asyncSaveService;
+    private final AsyncService asyncService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "이미지 불러오기", notes = "하나의 이미지 조회")
     @GetMapping(value = "/images/{imageId}")
-    public SingleResult<Image> findImage(
+    public SingleResult<ImageResponse> findImage(
             @ApiParam(value="이미지 아이디 값", required=true) @PathVariable Long imageId) {
 
         Image image = imageService.getImage(imageId);
 
-        return responseService.getSingleResult(image);
+        return responseService.getSingleResult(image.toImageResponse());
     }
 
     @ApiImplicitParams({
@@ -71,7 +68,7 @@ public class ImageController {
             throw new CTooManyImagesException();
         }
 
-        asyncSaveService.uploadAndSaveImage(file, postId);
+        asyncService.uploadAndSaveImage(file, postId);
 
         return responseService.getSuccessResult();
     }
@@ -108,18 +105,8 @@ public class ImageController {
     public SingleResult<PostImageResponse> findImagesByPost(
             @ApiParam(value = "게시물 아이디 값", required = true) @PathVariable Long postId){
 
-        List<ImageResponse> images = imageService.findImagesByPost(postId)
-                .stream()
-                .map(i -> ImageResponse.builder()
-                        .id(i.getImage_id())
-                        .url(i.getImage_url())
-                        .build()).collect(Collectors.toList());
+        Post post = postService.getPost(postId);
 
-        PostImageResponse photoImagesResponse = PostImageResponse.builder()
-                .count(images.size())
-                .images(images)
-                .build();
-
-        return responseService.getSingleResult(photoImagesResponse);
+        return responseService.getSingleResult(post.toPostImageResponse());
     }
 }

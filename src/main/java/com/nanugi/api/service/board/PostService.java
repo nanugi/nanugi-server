@@ -70,7 +70,7 @@ public class PostService {
     public PaginatedPostResponse findAllPostsByPageAndMemberId(int page, Long member_id){
         Pageable sortedByCreatedAt =
                 PageRequest.of(page, 10, Sort.by("createdAt").descending());
-        Page<Post> allPosts = postJpaRepo.findAllByUser_Msrl(member_id, sortedByCreatedAt);
+        Page<Post> allPosts = postJpaRepo.findAllByMember_Msrl(member_id, sortedByCreatedAt);
 
         String next = null;
         String previous = null;
@@ -107,7 +107,6 @@ public class PostService {
         post.setMaxParti(postRequest.getMaxParti());
         post.setMinParti(postRequest.getMinParti());
         post.setPrice(postRequest.getTotalPrice());
-        post.setNanumPrice(postRequest.getNanumPrice());
         post.setTitle(postRequest.getTitle());
         return post;
     }

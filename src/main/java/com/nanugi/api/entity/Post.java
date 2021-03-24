@@ -33,9 +33,9 @@ public class Post extends TimeStampedEntity {
     @JoinColumn(name = "postId")
     private List<Image> images= new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "msrl")
-    private Member user;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(nullable = false)
     private String title;
@@ -53,9 +53,6 @@ public class Post extends TimeStampedEntity {
     private int maxParti;
 
     @Column(nullable = false)
-    private int nanumPrice;
-
-    @Column(nullable = false)
     private String chatUrl;
 
     public String getThumbnail(){
@@ -68,7 +65,6 @@ public class Post extends TimeStampedEntity {
     public PostNanumInfoResponse toPostNanumInfoResponse(){
         return PostNanumInfoResponse.builder()
                 .price(price)
-                .nanumPrice(nanumPrice)
                 .chatUrl(chatUrl)
                 .minParti(minParti)
                 .maxParti(maxParti)
@@ -80,7 +76,7 @@ public class Post extends TimeStampedEntity {
                 .is_close(is_close)
                 .detail(toPostNanumInfoResponse())
                 .createdAt(getCreatedAt())
-                .user(user.toBlindMemberResponse())
+                .user(member.toBlindMemberResponse())
                 .title(title)
                 .content(content)
                 .post_id(post_id)
@@ -92,10 +88,12 @@ public class Post extends TimeStampedEntity {
                 .post_id(post_id)
                 .maxParti(maxParti)
                 .minParti(minParti)
-                .nanumPrice(nanumPrice)
+                .nanumPrice(price)
                 .thumbnail(getThumbnail())
                 .is_close(is_close)
                 .title(title)
+                .createdAt(getCreatedAt())
+                .nickname(member.getNickname())
                 .build();
     }
 
@@ -108,10 +106,9 @@ public class Post extends TimeStampedEntity {
                 .build();
     }
 
-    public static Post build(Member user, String title, String content, int nanumPrice, int price, int maxParti, int minParti, String chatUrl){
+    public static Post build(Member member, String title, String content, int price, int maxParti, int minParti, String chatUrl){
         return Post.builder()
-                .user(user)
-                .nanumPrice(nanumPrice)
+                .member(member)
                 .maxParti(maxParti)
                 .minParti(minParti)
                 .chatUrl(chatUrl)

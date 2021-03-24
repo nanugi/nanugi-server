@@ -60,7 +60,7 @@ public class ImageController {
 
         Post post = postService.getPost(postId);
 
-        if(post.getUser().getUid() != user.getUid()){
+        if(post.getMember().getUid() != user.getUid()){
             throw new CNotOwnerException();
         }
 
@@ -88,7 +88,7 @@ public class ImageController {
         Image image = imageService.getImage(imageId);
         Post post = postService.getPost(image.getPostId());
 
-        if(post.getUser().getUid() != user.getUid()){
+        if(post.getMember().getUid() != user.getUid()){
             throw new CNotOwnerException();
         }
 

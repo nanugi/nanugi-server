@@ -74,7 +74,6 @@ public class SignController {
         userJpaRepo.save(Member
                 .build(
                         memberSignupRequest.getId(),
-                        memberSignupRequest.getName(),
                         memberSignupRequest.getNickname(),
                         code,
                         passwordEncoder.encode(memberSignupRequest.getPassword())));
@@ -155,9 +154,6 @@ public class SignController {
         @NotNull @NotEmpty @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "최소 8자, 최소 하나의 문자와 숫자 조합으로 비밀번호를 만드세요")
         String password;
 
-        @NotNull @NotEmpty @Size(max = 50, message = "이름이 너무 깁니다")
-        String name;
-
         @NotNull
         @NotEmpty
         @Size(max = 15, message = "닉네임을 15자 이하로 입력하세요")
@@ -168,7 +164,7 @@ public class SignController {
     @RequiredArgsConstructor
     static class CertRequest{
 
-        @NotNull @NotEmpty
+        @NotNull @NotEmpty @Email(message = "이메일 형식을 입력하세요")
         String email;
     }
 
@@ -179,7 +175,7 @@ public class SignController {
         @NotNull @NotEmpty @Pattern(regexp = "^[a-z]{24}$", message = "올바른 인증 코드가 아닙니다.")
         String code;
 
-        @NotNull @NotEmpty
+        @NotNull @NotEmpty @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "최소 8자, 최소 하나의 문자와 숫자 조합으로 비밀번호를 만드세요")
         String password;
     }
 }

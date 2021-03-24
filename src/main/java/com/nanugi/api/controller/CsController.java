@@ -48,7 +48,7 @@ public class CsController {
         String email;
         @NotNull @NotEmpty @Pattern(regexp = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$", message = "유효한 핸드폰 번호를 ###-####-#### 형식으로 입력해주세요.")
         String phone_number;
-        @NotNull @NotEmpty @Size(max = 8000, message = "최대 8000자까지 입력 가능합니다.")
+        @NotNull @NotEmpty @Size(max = 5000, message = "최대 5000자까지 입력 가능합니다.")
         String content;
     }
 }

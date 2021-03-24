@@ -8,6 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostJpaRepo extends JpaRepository<Post, Long> {
 
-    Page<Post> findAllByUser_Msrl(Long msrl, Pageable pageable);
+    Page<Post> findAllByMember_Msrl(Long msrl, Pageable pageable);
 
 }

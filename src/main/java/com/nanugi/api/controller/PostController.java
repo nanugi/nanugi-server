@@ -29,9 +29,6 @@ public class PostController {
     private final PostService postService;
     private final ResponseService responseService;
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
-    })
     @ApiOperation(value = "모든 글 조회", notes = "모든 글을 조회한다 (기본적으로 최신 순으로 정렬됩니다, 0페이지 부터 10개씩 보여줍니다.)")
     @GetMapping(value = "/posts")
     public SingleResult<PaginatedPostResponse> findAllPosts(@ApiParam(value = "페이지", required = true) @RequestParam int page) {
@@ -63,7 +60,7 @@ public class PostController {
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
-        if(post.getUser().getMsrl() != user.getMsrl()){
+        if(post.getMember().getMsrl() != user.getMsrl()){
             throw new CNotOwnerException();
         }
 
@@ -85,7 +82,7 @@ public class PostController {
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
-        if(post.getUser().getMsrl() != user.getMsrl()){
+        if(post.getMember().getMsrl() != user.getMsrl()){
             throw new CNotOwnerException();
         }
 
@@ -106,7 +103,7 @@ public class PostController {
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
-        if(post.getUser().getMsrl() != user.getMsrl()){
+        if(post.getMember().getMsrl() != user.getMsrl()){
             throw new CNotOwnerException();
         }
 
@@ -127,7 +124,7 @@ public class PostController {
 
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
 
-        Post post = Post.build(user, postRequest.getTitle(), postRequest.getContent(), postRequest.getNanumPrice(), postRequest.getTotalPrice(), postRequest.getMaxParti(), postRequest.getMinParti(), postRequest.getChatUrl());
+        Post post = Post.build(user, postRequest.getTitle(), postRequest.getContent(), postRequest.getTotalPrice(), postRequest.getMaxParti(), postRequest.getMinParti(), postRequest.getChatUrl());
 
         Post savedPost = postService.save(post);
 

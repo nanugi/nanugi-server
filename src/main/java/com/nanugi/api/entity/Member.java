@@ -29,14 +29,13 @@ public class Member extends TimeStampedEntity implements UserDetails {
     @Id // pk
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long msrl;
+
     @Column(nullable = false, unique = true, length = 50)
     private String uid;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(length = 100)
     private String password;
-
-    @Column(nullable = false, length = 50)
-    private String name;
 
     @Column(nullable = false, length = 15, unique = true)
     private String nickname;
@@ -58,7 +57,7 @@ public class Member extends TimeStampedEntity implements UserDetails {
     private List<String> roles = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
     @Override
@@ -118,10 +117,9 @@ public class Member extends TimeStampedEntity implements UserDetails {
                 .build();
     }
 
-    public static Member build(String uid, String name, String nickname, String verifyCode, String encodedPassword){
+    public static Member build(String uid, String nickname, String verifyCode, String encodedPassword){
         return Member.builder()
                 .uid(uid)
-                .name(name)
                 .nickname(nickname)
                 .password(encodedPassword)
                 .isVerified(false)

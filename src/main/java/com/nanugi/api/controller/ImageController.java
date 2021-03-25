@@ -68,6 +68,10 @@ public class ImageController {
             throw new CTooManyImagesException();
         }
 
+        if(file.getContentType() == null || !file.getContentType().startsWith("image")){
+            throw new CNotSupportedImageFileException();
+        }
+
         asyncService.uploadAndSaveImage(file, postId);
 
         return responseService.getSuccessResult();
@@ -79,7 +83,7 @@ public class ImageController {
     @ApiOperation(value = "이미지 삭제", notes = "이미지를 삭제한다")
     @DeleteMapping(value = "/images/{imageId}")
     public CommonResult deleteImage(
-            @ApiParam(value = "게시물 아이디 값", required = true) @PathVariable Long imageId){
+            @ApiParam(value = "이미지 아이디 값", required = true) @PathVariable Long imageId){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();

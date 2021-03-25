@@ -40,3 +40,6 @@ nicknameAlreadyExists:
 tooManyImages:
   code: "-1012"
   msg: "한 게시물에는 최대 5개의 이미지만 업로드할 수 있습니다"
+notSupportedImageFile:
+  code: "-1013"
+  msg: "지원하는 사진 파일이 아닙니다"

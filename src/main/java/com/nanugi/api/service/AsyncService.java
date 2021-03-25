@@ -29,7 +29,15 @@ public class AsyncService {
             imageService.save(image);
         }
         catch(IOException e){
-            throw new CCommunicationException();
+            try{
+                image_link = s3Service.upload(file, postId);
+                Image image = Image.build(postId, image_link);
+
+                imageService.save(image);
+            }
+            catch(IOException e2){
+                throw new CCommunicationException();
+            }
         }
     }
 }

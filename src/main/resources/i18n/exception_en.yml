@@ -40,3 +40,6 @@ nicknameAlreadyExists:
 tooManyImages:
   code: "-1012"
   msg: "post cannot have more than 5 images"
+notSupportedImageFile:
+  code: "-1013"
+  msg: "not a supported image file"

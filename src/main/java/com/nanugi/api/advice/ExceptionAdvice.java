@@ -121,6 +121,12 @@ public class ExceptionAdvice {
         return responseService.getFailResult(-9999, "3MB 이하의 이미지만 업로드할 수 있습니다");
     }
 
+    @ExceptionHandler(CNotSupportedImageFileException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public CommonResult notSupportedImageFileException(HttpServletRequest request, CNotSupportedImageFileException e){
+        return responseService.getFailResult(Integer.valueOf(getMessage("notSupportedImageFile.code")), getMessage("notSupportedImageFile.msg"));
+    }
+
     // code정보에 해당하는 메시지를 조회합니다.
     private String getMessage(String code) {
         return getMessage(code, null);

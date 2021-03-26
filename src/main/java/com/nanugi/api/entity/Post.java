@@ -64,6 +64,7 @@ public class Post extends TimeStampedEntity {
 
     public PostNanumInfoResponse toPostNanumInfoResponse(){
         return PostNanumInfoResponse.builder()
+                .nanumPrice(price)
                 .price(price)
                 .chatUrl(chatUrl)
                 .minParti(minParti)

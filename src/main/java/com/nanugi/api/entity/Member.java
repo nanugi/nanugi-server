@@ -60,6 +60,11 @@ public class Member extends TimeStampedEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(targetEntity = Post.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_favs")
+    private List<Post> favs = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
@@ -115,6 +120,16 @@ public class Member extends TimeStampedEntity implements UserDetails {
                 .uid(uid)
                 .nickname(nickname)
                 .build();
+    }
+
+    public void toggleFav(Post post){
+        for(Post p: favs){
+            if(p.getPost_id() == post.getPost_id()){
+                favs.remove(post);
+                return;
+            }
+        }
+        favs.add(post);
     }
 
     public static Member build(String uid, String nickname, String verifyCode, String encodedPassword){

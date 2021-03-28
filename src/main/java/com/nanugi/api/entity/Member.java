@@ -125,7 +125,7 @@ public class Member extends TimeStampedEntity implements UserDetails {
     public void toggleFav(Post post){
         for(Post p: favs){
             if(p.getPost_id() == post.getPost_id()){
-                favs.remove(post);
+                favs.remove(p);
                 return;
             }
         }

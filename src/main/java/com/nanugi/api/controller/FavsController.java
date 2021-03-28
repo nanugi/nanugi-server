@@ -1,5 +1,6 @@
 package com.nanugi.api.controller;
 
+import com.nanugi.api.advice.exception.CAuthenticationEntryPointException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;;
 import com.nanugi.api.entity.Member;
 import com.nanugi.api.entity.Post;
@@ -11,6 +12,8 @@ import com.nanugi.api.service.ResponseService;
 import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +31,15 @@ public class FavsController {
     private final ResponseService responseService;
     private final MemberJpaRepo memberJpaRepo;
 
+    @Cacheable(value = "get_myfavs", key = "#x_token")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "관심 목록 불러오기", notes = "나의 관심목록 조회")
     @GetMapping(value = "/favs")
-    public ListResult<PostListResponse> favList(){
+    public ListResult<PostListResponse> favList(
+            @RequestHeader(name = "X-AUTH-TOKEN") String x_token
+    ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
@@ -44,12 +50,14 @@ public class FavsController {
         return responseService.getListResult(postLists);
     }
 
+    @CacheEvict(value = "get_myfavs", key = "#x_token")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "관심목록 추가하기/없애기", notes = "관심목록 추가 or 삭제 (토글형식)")
     @PutMapping(value = "/favs/{postId}")
     public CommonResult toggleFav(
+            @RequestHeader(name = "X-AUTH-TOKEN") String x_token,
             @ApiParam(value = "게시물 아이디 값", required = true) @PathVariable Long postId
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,8 +67,15 @@ public class FavsController {
 
         Post post = postService.getPost(postId);
 
+        if(post.getMember().getUid() == id){
+            throw new CAuthenticationEntryPointException();
+        }
+
         user.toggleFav(post);
         memberJpaRepo.save(user);
+        for(Post p : user.getFavs()){
+            System.out.println(p.getPost_id());
+        }
 
         return responseService.getSuccessResult();
     }

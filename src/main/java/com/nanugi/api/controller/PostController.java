@@ -14,6 +14,7 @@ import com.nanugi.api.service.ResponseService;
 import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -48,12 +49,15 @@ public class PostController {
         return responseService.getSingleResult(post.toPostResponse());
     }
 
+    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "글 삭제", notes = "하나의 글을 삭제한다")
     @DeleteMapping(value = "/posts/{post_id}")
-    public CommonResult deletePost(@ApiParam(value = "포스트 아이디", required = true) @PathVariable Long post_id) {
+    public CommonResult deletePost(
+            @RequestHeader(name = "X-AUTH-TOKEN") String x_token,
+            @ApiParam(value = "포스트 아이디", required = true) @PathVariable Long post_id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
@@ -69,13 +73,16 @@ public class PostController {
         return responseService.getSuccessResult();
     }
 
+    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "글 수정", notes = "하나의 글을 수정한다")
     @PutMapping(value = "/posts/{post_id}")
-    public SingleResult<PostResponse> updatePost(@ApiParam(value = "포스트 아이디", required = true) @PathVariable Long post_id,
-                                                 @ApiParam(value = "포스트 내용", required = true) @Valid @RequestBody PostRequest postRequest) {
+    public SingleResult<PostResponse> updatePost(
+            @RequestHeader(name = "X-AUTH-TOKEN") String x_token,
+            @ApiParam(value = "포스트 아이디", required = true) @PathVariable Long post_id,
+            @ApiParam(value = "포스트 내용", required = true) @Valid @RequestBody PostRequest postRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
@@ -91,12 +98,15 @@ public class PostController {
         return responseService.getSingleResult(new_post.toPostResponse());
     }
 
+    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "나누기 종료", notes = "나눔 상태를 종료로 바꾼다")
     @PutMapping(value = "/posts/{post_id}/close")
-    public SingleResult<PostResponse> updatePost(@ApiParam(value = "포스트 아이디", required = true) @PathVariable Long post_id) {
+    public SingleResult<PostResponse> updatePost(
+            @RequestHeader(name = "X-AUTH-TOKEN") String x_token,
+            @ApiParam(value = "포스트 아이디", required = true) @PathVariable Long post_id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 
@@ -107,18 +117,20 @@ public class PostController {
             throw new CNotOwnerException();
         }
 
-        post.set_close(true);
-        Post new_post = postService.save(post);
+        Post new_post = postService.closePost(post_id);
 
         return responseService.getSingleResult(new_post.toPostResponse());
     }
 
+    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "글 쓰기", notes = "글을 작성한다")
     @PostMapping(value = "/posts")
-    public SingleResult<PostResponse> savePost(@ApiParam(value = "글", required = true) @Valid @RequestBody PostRequest postRequest){
+    public SingleResult<PostResponse> savePost(
+            @RequestHeader(name = "X-AUTH-TOKEN") String x_token,
+            @ApiParam(value = "글", required = true) @Valid @RequestBody PostRequest postRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
 

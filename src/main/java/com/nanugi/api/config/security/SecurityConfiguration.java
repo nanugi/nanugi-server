@@ -109,6 +109,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
             Member admin_user = Member.build(adminUserId, "관리자", "", passwordEncoder.encode(adminUserPassword));
             admin_user.addRole("ADMIN_USER");
+            admin_user.addRole("ROLE_USER");
             admin_user.setIsVerified(true);
             userJpaRepo.save(admin_user);
         }

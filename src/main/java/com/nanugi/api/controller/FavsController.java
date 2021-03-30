@@ -55,10 +55,10 @@ public class FavsController {
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "관심목록 추가하기/없애기", notes = "관심목록 추가 or 삭제 (토글형식)")
-    @PutMapping(value = "/favs/{postId}")
+    @PutMapping(value = "/favs")
     public CommonResult toggleFav(
             @RequestHeader(name = "X-AUTH-TOKEN") String x_token,
-            @ApiParam(value = "게시물 아이디 값", required = true) @PathVariable Long postId
+            @ApiParam(value = "게시물 아이디 값", required = true) @RequestParam Long postId
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();

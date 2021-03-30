@@ -96,6 +96,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
         Member test_user;
+        Member admin_user;
         try{
 
             test_user = Member
@@ -107,7 +108,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             test_user.setIsVerified(true);
             userJpaRepo.save(test_user);
 
-            Member admin_user = Member.build(adminUserId, "관리자", "", passwordEncoder.encode(adminUserPassword));
+            admin_user = Member.build(adminUserId, "관리자", "", passwordEncoder.encode(adminUserPassword));
             admin_user.addRole("ADMIN_USER");
             admin_user.addRole("ROLE_USER");
             admin_user.setIsVerified(true);
@@ -116,6 +117,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         catch (Exception e){
             System.out.println(e.getClass()+e.getMessage());
             test_user = userJpaRepo.findByNickname("나누기").orElseThrow(CUserNotFoundException::new);
+            admin_user = userJpaRepo.findByNickname("관리자").orElseThrow(CUserNotFoundException::new);
         }
 
         Random random = new Random();
@@ -132,13 +134,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 postJpaRepo.save(post);
 
                 for(int i=0;i<25; i++){
-                    post = Post.build(test_user,
+                    Member m = i%2 == 0? test_user : admin_user;
+                    post = Post.build(m,
                             "Testing Post " + (i+1),
                             "This is just a random post passing by...",
                             random.nextInt(40000),
                             random.nextInt(10)+5,
                             random.nextInt(3)+1,
-                            "http://openchat.com/1");
+                            "http://");
                     postJpaRepo.save(post);
                     sleep(1000);
                 }

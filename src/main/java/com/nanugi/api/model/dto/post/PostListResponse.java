@@ -12,7 +12,7 @@ public class PostListResponse {
     String title;
     String nickname;
     String thumbnail;
-    int nanumPrice;
+    int totalPrice;
     int minParti;
     int maxParti;
     boolean is_close;

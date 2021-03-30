@@ -43,3 +43,6 @@ tooManyImages:
 notSupportedImageFile:
   code: "-1013"
   msg: "not a supported image file"
+tooManyFavs:
+  code: "-1014"
+  msg: "you can't add more than 30 nanugi posts"

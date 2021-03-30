@@ -64,8 +64,7 @@ public class Post extends TimeStampedEntity {
 
     public PostNanumInfoResponse toPostNanumInfoResponse(){
         return PostNanumInfoResponse.builder()
-                .nanumPrice(price)
-                .price(price)
+                .totalPrice(price)
                 .chatUrl(chatUrl)
                 .minParti(minParti)
                 .maxParti(maxParti)
@@ -89,7 +88,7 @@ public class Post extends TimeStampedEntity {
                 .post_id(post_id)
                 .maxParti(maxParti)
                 .minParti(minParti)
-                .nanumPrice(price)
+                .totalPrice(price)
                 .thumbnail(getThumbnail())
                 .is_close(is_close)
                 .title(title)

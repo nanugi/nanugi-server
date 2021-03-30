@@ -43,3 +43,6 @@ tooManyImages:
 notSupportedImageFile:
   code: "-1013"
   msg: "지원하는 사진 파일이 아닙니다"
+tooManyFavs:
+  code: "-1014"
+  msg: "관심 나누기는 30개를 초과하여 설정할 수 없습니다"

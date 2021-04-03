@@ -10,4 +10,5 @@ public class PostNanumInfoResponse {
     private int minParti;
     private int maxParti;
     private String chatUrl;
+    private int liked;
 }

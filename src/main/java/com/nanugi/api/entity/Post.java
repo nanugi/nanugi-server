@@ -55,6 +55,9 @@ public class Post extends TimeStampedEntity {
     @Column(nullable = false)
     private String chatUrl;
 
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private Integer liked;
+
     public String getThumbnail(){
         if(images.size() > 0){
             return images.get(0).getImage_url();
@@ -68,6 +71,7 @@ public class Post extends TimeStampedEntity {
                 .chatUrl(chatUrl)
                 .minParti(minParti)
                 .maxParti(maxParti)
+                .liked(liked)
                 .build();
     }
 
@@ -116,6 +120,7 @@ public class Post extends TimeStampedEntity {
                 .content(content)
                 .title(title)
                 .is_close(false)
+                .liked(0)
                 .build();
     }
 }

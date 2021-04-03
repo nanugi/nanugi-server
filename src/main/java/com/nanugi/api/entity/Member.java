@@ -61,8 +61,7 @@ public class Member extends TimeStampedEntity implements UserDetails {
     private List<Post> posts = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(targetEntity = Post.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_favs")
+    @ManyToMany(targetEntity = Post.class, fetch = FetchType.LAZY)
     private List<Post> favs = new ArrayList<>();
 
     @Override
@@ -122,14 +121,17 @@ public class Member extends TimeStampedEntity implements UserDetails {
                 .build();
     }
 
-    public void toggleFav(Post post){
+    public String toggleFav(Post post){
         for(Post p: favs){
             if(p.getPost_id() == post.getPost_id()){
                 favs.remove(p);
-                return;
+                post.setLiked(post.getLiked() - 1);
+                return "관심 등록이 취소되었습니다.";
             }
         }
         favs.add(post);
+        post.setLiked(post.getLiked() + 1);
+        return "해당 게시물이 관심 등록 되었습니다.";
     }
 
     public static Member build(String uid, String nickname, String verifyCode, String encodedPassword){

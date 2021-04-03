@@ -53,8 +53,8 @@ public class ResponseService {
 
     public CommonResult getSuccessResult(String msg) {
         CommonResult result = new CommonResult();
-        result.setMsg(msg);
         setSuccessResult(result);
+        result.setMsg(msg);
         return result;
     }
 

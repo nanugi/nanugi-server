@@ -71,13 +71,11 @@ public class FavsController {
             throw new CAuthenticationEntryPointException();
         }
 
-        user.toggleFav(post);
+        String message = user.toggleFav(post);
         memberJpaRepo.save(user);
-        for(Post p : user.getFavs()){
-            System.out.println(p.getPost_id());
-        }
+        postService.save(post);
 
-        return responseService.getSuccessResult();
+        return responseService.getSuccessResult(message);
     }
 
 }

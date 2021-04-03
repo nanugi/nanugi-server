@@ -15,6 +15,7 @@ import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +33,18 @@ public class PostController {
 
     @ApiOperation(value = "모든 글 조회", notes = "모든 글을 조회한다 (기본적으로 최신 순으로 정렬됩니다, 0페이지 부터 10개씩 보여줍니다.)")
     @GetMapping(value = "/posts")
-    public SingleResult<PaginatedPostResponse> findAllPosts(@ApiParam(value = "페이지", required = true) @RequestParam int page) {
-        PaginatedPostResponse paginatedPostResponse = postService.findAllPostsByPage(page);
+    public SingleResult<PaginatedPostResponse> findAllPosts(
+            @ApiParam(value = "페이지", required = true) @RequestParam int page,
+            @ApiParam(value = "검색어", required = false) @Nullable  @RequestParam String search
+            ) {
+        PaginatedPostResponse paginatedPostResponse;
+
+        if(search == null || search == "") {
+            paginatedPostResponse = postService.findAllPostsByPage(page);
+        }
+        else{
+            paginatedPostResponse = postService.findAllPostsByKeyword(page, search);
+        }
 
         return responseService.getSingleResult(paginatedPostResponse);
     }

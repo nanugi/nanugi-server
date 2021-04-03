@@ -43,6 +43,39 @@ public class PostService {
         postJpaRepo.deleteById(id);
     }
 
+    public PaginatedPostResponse findAllPostsByKeyword(int page, String keyword){
+        Pageable sortedByCreatedAt =
+                PageRequest.of(page, 10, Sort.by("createdAt").descending());
+        Page<Post> allPosts = postJpaRepo.findAllByTitleContaining(keyword, sortedByCreatedAt);
+
+        String next = null;
+        String previous = null;
+
+        if(allPosts.hasPrevious()){
+            previous = "https://api.nanugi.ml/v1/posts/?page="+(page-1)+"&search="+keyword;
+        }
+        if(allPosts.hasNext()){
+            next = "https://api.nanugi.ml/v1/posts/?page="+(page+1)+"&search="+keyword;
+        }
+
+        List<PostListResponse> postResponses =
+                allPosts.getContent()
+                        .stream()
+                        .map(p->p.toPostListResponse())
+                        .collect(Collectors.toList());
+
+        PaginatedPostResponse paginatedPostResponse
+                = PaginatedPostResponse.builder()
+                .page(sortedByCreatedAt.getPageNumber())
+                .next(next)
+                .previous(previous)
+                .size(allPosts.getNumberOfElements())
+                .posts(postResponses)
+                .build();
+
+        return paginatedPostResponse;
+    }
+
     @Cacheable(value = "get_posts", key = "#page")
     public PaginatedPostResponse findAllPostsByPage(int page){
         Pageable sortedByCreatedAt =

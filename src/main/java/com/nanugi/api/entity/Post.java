@@ -96,6 +96,7 @@ public class Post extends TimeStampedEntity {
                 .thumbnail(getThumbnail())
                 .is_close(is_close)
                 .title(title)
+                .liked(liked)
                 .createdAt(getCreatedAt())
                 .nickname(member.getNickname())
                 .build();

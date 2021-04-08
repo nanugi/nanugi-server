@@ -14,7 +14,6 @@ import com.nanugi.api.service.ResponseService;
 import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,7 +59,6 @@ public class PostController {
         return responseService.getSingleResult(post.toPostResponse());
     }
 
-    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
@@ -84,7 +82,6 @@ public class PostController {
         return responseService.getSuccessResult();
     }
 
-    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
@@ -109,7 +106,6 @@ public class PostController {
         return responseService.getSingleResult(new_post.toPostResponse());
     }
 
-    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
@@ -133,7 +129,6 @@ public class PostController {
         return responseService.getSingleResult(new_post.toPostResponse());
     }
 
-    @CacheEvict(value = "get_myposts", key = "#x_token", allEntries = true)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })

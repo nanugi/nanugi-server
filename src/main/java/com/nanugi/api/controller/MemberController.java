@@ -13,7 +13,6 @@ import com.nanugi.api.service.board.PostService;
 import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +47,6 @@ public class MemberController {
         return responseService.getSingleResult(member.toMemberResponse());
     }
 
-    @Cacheable(value = "get_myposts", key = "{#x_token, #page}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })

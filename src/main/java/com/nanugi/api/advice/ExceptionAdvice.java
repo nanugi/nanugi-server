@@ -127,6 +127,12 @@ public class ExceptionAdvice {
         return responseService.getFailResult(Integer.valueOf(getMessage("notSupportedImageFile.code")), getMessage("notSupportedImageFile.msg"));
     }
 
+    @ExceptionHandler(CTooManyFavsException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResult tooManyFavsException(HttpServletRequest request, CTooManyFavsException e){
+        return responseService.getFailResult(Integer.valueOf(getMessage("tooManyFavs.code")), getMessage("tooManyFavs.msg"));
+    }
+
     // code정보에 해당하는 메시지를 조회합니다.
     private String getMessage(String code) {
         return getMessage(code, null);

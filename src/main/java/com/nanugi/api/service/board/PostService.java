@@ -5,10 +5,6 @@ import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.post.*;
 import com.nanugi.api.repo.PostJpaRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,15 +26,10 @@ public class PostService {
         return postJpaRepo.save(post);
     }
 
-    @Cacheable(value = "get_post", key = "#id", unless = "#result == null")
     public Post getPost(Long id){
         return postJpaRepo.findById(id).orElseThrow(CResourceNotExistException::new);
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "get_posts", allEntries = true),
-        @CacheEvict(value = "get_post", key = "#id")
-    })
     public void deletePost(Long id){
         postJpaRepo.deleteById(id);
     }
@@ -76,7 +67,6 @@ public class PostService {
         return paginatedPostResponse;
     }
 
-    @Cacheable(value = "get_posts", key = "#page")
     public PaginatedPostResponse findAllPostsByPage(int page){
         Pageable sortedByCreatedAt =
                 PageRequest.of(page, 10, Sort.by("createdAt").descending());
@@ -143,8 +133,6 @@ public class PostService {
         return paginatedPostResponse;
     }
 
-    @CacheEvict(value = "get_posts", allEntries = true)
-    @CachePut(value = "get_post", key = "#post_id")
     public Post updatePost(Long post_id, PostRequest postRequest) {
         Post post = getPost(post_id);
         post.setContent(postRequest.getContent());
@@ -156,8 +144,7 @@ public class PostService {
         return post;
     }
 
-    @CacheEvict(value = "get_posts", allEntries = true)
-    @CachePut(value = "get_post", key = "#post_id")
+
     public Post closePost(Long post_id){
         Post post = getPost(post_id);
         post.set_close(true);

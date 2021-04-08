@@ -15,6 +15,7 @@ public class PostListResponse {
     int totalPrice;
     int minParti;
     int maxParti;
+    int liked;
     boolean is_close;
     LocalDateTime createdAt;
 }

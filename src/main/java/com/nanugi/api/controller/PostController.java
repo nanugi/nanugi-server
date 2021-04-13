@@ -56,7 +56,12 @@ public class PostController {
     public SingleResult<PostResponse> findPost(@ApiParam(value = "포스트 아이디", required = true) @PathVariable Long id) {
         Post post = postService.getPost(id);
 
-        return responseService.getSingleResult(post.toPostResponse());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
+        Member user = userJpaRepo.findByUid(name).orElseThrow(CUserNotFoundException::new);
+
+        return responseService.getSingleResult(post.toPostResponse(user));
     }
 
     @ApiImplicitParams({
@@ -103,7 +108,7 @@ public class PostController {
 
         Post new_post = postService.updatePost(post_id, postRequest);
 
-        return responseService.getSingleResult(new_post.toPostResponse());
+        return responseService.getSingleResult(new_post.toPostResponse(user));
     }
 
     @ApiImplicitParams({
@@ -126,7 +131,7 @@ public class PostController {
 
         Post new_post = postService.closePost(post_id);
 
-        return responseService.getSingleResult(new_post.toPostResponse());
+        return responseService.getSingleResult(new_post.toPostResponse(user));
     }
 
     @ApiImplicitParams({
@@ -146,6 +151,6 @@ public class PostController {
 
         Post savedPost = postService.save(post);
 
-        return responseService.getSingleResult(savedPost.toPostResponse());
+        return responseService.getSingleResult(savedPost.toPostResponse(user));
     }
 }

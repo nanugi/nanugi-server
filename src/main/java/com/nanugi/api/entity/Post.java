@@ -80,8 +80,21 @@ public class Post extends TimeStampedEntity {
                 .build();
     }
 
-    public PostResponse toPostResponse(){
+    public PostResponse toPostResponse(Member user){
+
+        boolean myfav = false;
+
+        if(member.getMsrl() != user.getMsrl()) {
+            for (Post post : user.getFavs()) {
+                if (post.getPost_id() == post_id) {
+                    myfav = true;
+                    break;
+                }
+            }
+        }
+
         return PostResponse.builder()
+                .is_myfav(myfav)
                 .is_close(is_close)
                 .detail(toPostNanumInfoResponse())
                 .createdAt(getCreatedAt())

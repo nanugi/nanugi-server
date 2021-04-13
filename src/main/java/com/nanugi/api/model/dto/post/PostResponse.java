@@ -12,6 +12,7 @@ public class PostResponse {
 
     private Long post_id;
     private boolean is_close;
+    private boolean is_myfav;
     private MemberResponse user;
     private String title;
     private String content;

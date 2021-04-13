@@ -10,6 +10,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Setter
@@ -62,7 +63,11 @@ public class Post extends TimeStampedEntity {
         if(images.size() > 0){
             return images.get(0).getImage_url();
         }
-        return null;
+
+        Random random = new Random();
+        int image_num = random.nextInt(5)+1;
+        String image_url = "https://nanugi-bucket.s3.ap-northeast-2.amazonaws.com/img/thumbnail/" + image_num + ".jpg";
+        return image_url;
     }
 
     public PostNanumInfoResponse toPostNanumInfoResponse(){

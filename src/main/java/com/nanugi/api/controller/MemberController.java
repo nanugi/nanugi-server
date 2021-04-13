@@ -69,12 +69,33 @@ public class MemberController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
-    @ApiOperation(value = "회원 단건 조회", notes = "회원번호(msrl)로 회원을 조회한다")
-    @GetMapping(value = "/users/{msrl}")
-    public SingleResult<MemberResponse> fimdMember(@ApiParam(value = "회원번호", required = true) @PathVariable Long msrl) {
+    @ApiOperation(value = "회원 단건 조회", notes = "닉네임으로 회원을 조회한다")
+    @GetMapping(value = "/users")
+    public SingleResult<MemberResponse> fimdMember(
+            @ApiParam(value = "회원 닉네임", required = true) @RequestParam String nickname) {
 
-        Member member = memberJpaRepo.findById(msrl).orElseThrow(CUserNotFoundException::new);
+        Member member = memberJpaRepo.findByNickname(nickname).orElseThrow(CUserNotFoundException::new);
         return responseService.getSingleResult(member.toBlindMemberResponse());
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
+    @ApiOperation(value = "회원 나눔글 조회", notes = "닉네임으로 해당 회원이 작성한 나눔글 목록을 조회한다")
+    @GetMapping(value = "/users/posts")
+    public SingleResult<PaginatedPostResponse> findMemberPosts(
+            @RequestHeader(name = "X-AUTH-TOKEN") String x_token,
+            @ApiParam(value = "회원 닉네임", required = true) @RequestParam String nickname,
+            @ApiParam(value = "페이지", required = true) @RequestParam int page) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+
+        Member member = memberJpaRepo.findByNickname(nickname).orElseThrow(CUserNotFoundException::new);
+
+        PaginatedPostResponse posts = postService.findAllPostsByPageAndMemberId(page, member.getMsrl());
+
+        return responseService.getSingleResult(posts);
     }
 
     @ApiImplicitParams({

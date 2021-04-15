@@ -5,6 +5,7 @@ import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.post.*;
 import com.nanugi.api.repo.PostJpaRepo;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.impl.execchain.RequestAbortedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 @Service

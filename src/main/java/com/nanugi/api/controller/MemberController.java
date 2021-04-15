@@ -61,7 +61,7 @@ public class MemberController {
 
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
 
-        PaginatedPostResponse myposts = postService.findAllPostsByPageAndMemberId(page, member.getMsrl());
+        PaginatedPostResponse myposts = postService.findAllPostsByPageAndMemberId(page, member.getNickname(), member.getMsrl());
 
         return responseService.getSingleResult(myposts);
     }
@@ -93,7 +93,7 @@ public class MemberController {
 
         Member member = memberJpaRepo.findByNickname(nickname).orElseThrow(CUserNotFoundException::new);
 
-        PaginatedPostResponse posts = postService.findAllPostsByPageAndMemberId(page, member.getMsrl());
+        PaginatedPostResponse posts = postService.findAllPostsByPageAndMemberId(page, nickname, member.getMsrl());
 
         return responseService.getSingleResult(posts);
     }

@@ -43,10 +43,10 @@ public class PostService {
         String previous = null;
 
         if(allPosts.hasPrevious()){
-            previous = "https://api.nanugi.ml/v1/posts/?page="+(page-1)+"&search="+keyword;
+            previous = "https://api.nanugi.ml/v1/posts?page="+(page-1)+"&search="+keyword;
         }
         if(allPosts.hasNext()){
-            next = "https://api.nanugi.ml/v1/posts/?page="+(page+1)+"&search="+keyword;
+            next = "https://api.nanugi.ml/v1/posts?page="+(page+1)+"&search="+keyword;
         }
 
         List<PostListResponse> postResponses =
@@ -76,10 +76,10 @@ public class PostService {
         String previous = null;
 
         if(allPosts.hasPrevious()){
-            previous = "https://api.nanugi.ml/v1/posts/?page="+(page-1);
+            previous = "https://api.nanugi.ml/v1/posts?page="+(page-1);
         }
         if(allPosts.hasNext()){
-            next = "https://api.nanugi.ml/v1/posts/?page="+(page+1);
+            next = "https://api.nanugi.ml/v1/posts?page="+(page+1);
         }
 
         List<PostListResponse> postResponses =
@@ -100,7 +100,7 @@ public class PostService {
         return paginatedPostResponse;
     }
 
-    public PaginatedPostResponse findAllPostsByPageAndMemberId(int page, Long member_id){
+    public PaginatedPostResponse findAllPostsByPageAndMemberId(int page, String nickname, Long member_id){
         Pageable sortedByCreatedAt =
                 PageRequest.of(page, 10, Sort.by("createdAt").descending());
         Page<Post> allPosts = postJpaRepo.findAllByMember_Msrl(member_id, sortedByCreatedAt);
@@ -109,10 +109,10 @@ public class PostService {
         String previous = null;
 
         if(allPosts.hasPrevious()){
-            previous = "https://api.nanugi.ml/v1/posts/?page="+(page-1);
+            previous = "https://api.nanugi.ml/v1/users/posts?"+"nickname="+nickname+"&page="+(page-1);
         }
         if(allPosts.hasNext()){
-            next = "https://api.nanugi.ml/v1/posts/?page="+(page+1);
+            next = "https://api.nanugi.ml/v1/users/posts?"+"nickname="+nickname+"&page="+(page+1);
         }
 
         List<PostListResponse> postResponses =

@@ -34,7 +34,7 @@ public class PostController {
     @GetMapping(value = "/posts")
     public SingleResult<PaginatedPostResponse> findAllPosts(
             @ApiParam(value = "페이지", required = true) @RequestParam int page,
-            @ApiParam(value = "검색어", required = false) @Nullable  @RequestParam String search
+            @ApiParam(value = "검색어", required = false) @Nullable @RequestParam String search
             ) {
         PaginatedPostResponse paginatedPostResponse;
 

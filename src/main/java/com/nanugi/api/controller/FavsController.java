@@ -64,7 +64,7 @@ public class FavsController {
 
         Post post = postService.getPost(postId);
 
-        if(post.getMember().getUid() == id){
+        if(post.getMember().getUid() == user.getUid()){
             throw new CAuthenticationEntryPointException();
         }
 

@@ -40,12 +40,12 @@ public class SignController {
             @ApiParam(value="이메일, 비밀번호", required=true) @RequestBody @Valid MemberSigninRequest memberSigninRequest) {
 
         Member member = userJpaRepo.findByUid(memberSigninRequest.getId()).orElseThrow(CEmailSigninFailedException::new);
-        if (!passwordEncoder.matches(memberSigninRequest.getPassword(), member.getPassword()))
-            throw new CEmailSigninFailedException();
-
         if(member.getIsVerified() == false){
             throw new CEmailNotVerifiedException();
         }
+
+        if (!passwordEncoder.matches(memberSigninRequest.getPassword(), member.getPassword()))
+            throw new CEmailSigninFailedException();
 
         return responseService.getSingleResult(jwtTokenProvider.createToken(String.valueOf(member.getMsrl()), member.getRoles()));
     }
@@ -148,10 +148,13 @@ public class SignController {
     @RequiredArgsConstructor
     static class MemberSignupRequest {
 
-        @NotNull @NotEmpty @Email @Pattern(regexp = "^.*((.ac.kr$)|(.edu$))", message = "학교 이메일을 입력해주세요.")
+        @NotNull @NotEmpty @Email
+        @Pattern(regexp = "^.*((.ac.kr$)|(.edu$)|(chosun.kr$)|(sangmyung.kr$))", message = "학교 이메일을 입력해주세요. 학교 이메일이 아니라고 계속 뜨는 경우 시스템에 등록되지 않은 학교입니다, 플러스 친구로 문의 or division.foreveryoung@gmail.com 메일을 보내주세요!")
         String id;
 
-        @NotNull @NotEmpty @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "최소 8자, 최소 하나의 문자와 숫자 조합으로 비밀번호를 만드세요")
+        @NotNull @NotEmpty
+        @Pattern(regexp = "[0-9a-z!@#$%^*+=-]+", message = "영문, 숫자, 특수문자 !@#$%^*+=-만 사용 가능합니다")
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$", message = "8자에서 16자 사이의 문자+숫자(+특수문자)를 조합하는 비밀번호를 만드세요")
         String password;
 
         @NotNull
@@ -175,7 +178,9 @@ public class SignController {
         @NotNull @NotEmpty @Pattern(regexp = "^[a-z]{24}$", message = "올바른 인증 코드가 아닙니다.")
         String code;
 
-        @NotNull @NotEmpty @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "최소 8자, 최소 하나의 문자와 숫자 조합으로 비밀번호를 만드세요")
+        @NotNull @NotEmpty
+        @Pattern(regexp = "[0-9a-z!@#$%^*+=-]+", message = "영문, 숫자, 특수문자 !@#$%^*+=-만 사용 가능합니다")
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$", message = "8자에서 16자 사이의 문자+숫자(+특수문자)를 조합하는 비밀번호를 만드세요")
         String password;
     }
 }

@@ -81,6 +81,30 @@ public class SignController {
         return responseService.getSuccessResult();
     }
 
+    @ApiOperation(value="이메일 인증 메일 다시 보내기", notes = "이메일 인증 메일을 다시 보낸다")
+    @PostMapping(value="/verification")
+    public CommonResult SendVerificationEmail(@ApiParam(value = "가입 이메일", required = true) @Valid @RequestBody CertRequest certRequest){
+        Member user = userJpaRepo.findByUid(certRequest.getEmail()).orElseThrow(CUserNotFoundException::new);
+
+        if(user.getIsVerified()){
+            throw new CAuthenticationEntryPointException();
+        }
+
+        String code = emailSenderService.getSecretCode();
+
+        try{
+            emailSenderService.sendVerificationEmail(certRequest.getEmail(), code);
+        }
+        catch(UnirestException e){
+            throw new CEmailSendFailException();
+        }
+
+        user.setVerifyCode(code);
+        userJpaRepo.save(user);
+
+        return responseService.getSuccessResult("인증 메일을 전송하였습니다. 메일함을 확인하세요. 스팸 메일로 분류될 수 있습니다.");
+    }
+
     @ApiOperation(value="이메일 인증", notes="이메일 인증 링크를 클릭한다")
     @GetMapping(value="/email-verification")
     public CommonResult EmailVerification(@ApiParam(value = "이메일 인증 코드", required = true) @RequestParam String code){

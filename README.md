@@ -1,5 +1,6 @@
 # nanugi-server
-[API Document](https://api.nanugi.ml/swagger-ui.html)
+- [API Document](https://api.nanugi.ml/swagger-ui.html)
+- [배포 예시(프론트엔드/디자인 팀과 협업)](https://nanugi.github.io/nanugi-web/)
 
 ## 나누기 팀 소개
 ```
@@ -22,17 +23,26 @@
 - AWS RDS, EC2, S3 : 서버 구축
 - Spring Boot : REST API 구현
 
+## 사진
+<img src="images/logo.png" width="300px">
+<img src="images/signup.png" width="300px">
+<img src="images/main.png" width="300px">
+<img src="images/post.png" width="300px">
+<img src="images/newpost.png" width="300px">
+<img src="images/mypage.png" width="300px">
+<img src="images/myfav.png" width="300px">
+<img src="images/mynanugi.png" width="300px">
+
 ## 기능 구현
+- [x] 데이터베이스 구현 (유저, 포스트, 관심글)
 - [x] JWT를 사용한 로그인/회원가입
-- [x] 학교 메일 인증
+- [x] 학교 메일 인증 및 비밀번호 찾기
 - [x] 글쓰기, 수정하기, 삭제하기
 - [x] 이미지 업로드하기 (aws s3와 연동)
 - [x] 메일 보내기, 이미지 업로드 등은 비동기 방식으로 구현
 - [x] 나눔글 좋아요 누르기 (토글 형식으로 구현)
+- [x] 관심글 목록, 내가 쓴 글 목록 확인하기
 - [x] 게시물 검색기능 추가
 - [ ] 캐시 처리
 - [ ] 무중단 배포
 - [ ] 테스트 주도 개발 방식 도입
-
-## 프론트엔드/디자인 팀과 협업
-[배포 예시](https://nanugi.github.io/nanugi-web/)

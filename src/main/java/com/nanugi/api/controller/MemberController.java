@@ -1,5 +1,6 @@
 package com.nanugi.api.controller;
 
+import com.nanugi.api.advice.exception.CEmailSigninFailedException;
 import com.nanugi.api.advice.exception.CNicknameAlreadyExistException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Member;
@@ -15,11 +16,13 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Optional;
 
@@ -32,6 +35,7 @@ public class MemberController {
     private final MemberJpaRepo memberJpaRepo;
     private final PostService postService;
     private final ResponseService responseService;
+    private final PasswordEncoder passwordEncoder;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
@@ -121,6 +125,28 @@ public class MemberController {
     }
 
     @ApiImplicitParams({
+            @ApiImplicitParam(name="X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+    })
+    @ApiOperation(value = "비밀번호 변경", notes = "로그인 되어 있을 경우 자신의 비밀번호를 변경한다")
+    @PutMapping(value = "/user/me/password")
+    public CommonResult updatePassword(
+            @ApiParam(value = "비밀번호 정보(기존 비밀번호, 새 비밀번호)", required = true) @Valid @RequestBody PasswordPutRequest passwordPutRequest){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+
+        if(passwordEncoder.matches(passwordPutRequest.getPassword(), member.getPassword())){
+            member.setPassword(passwordEncoder.encode(passwordPutRequest.getNew_password()));
+        }
+        else{
+            throw new CEmailSigninFailedException();
+        }
+
+        return responseService.getSuccessResult();
+    }
+
+    @ApiImplicitParams({
             @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "회원 삭제", notes = "자신의 계정을 삭제한다.")
@@ -141,6 +167,17 @@ public class MemberController {
         @NotNull @NotEmpty
         @Size(max = 15, message = "닉네임은 최대 15자로 구성해야 합니다")
         private String nickname;
+    }
+
+    @Data
+    @RequiredArgsConstructor
+    static class PasswordPutRequest {
+        @NotNull @NotEmpty
+        private String password;
+        @NotNull @NotEmpty
+        @Pattern(regexp = "[0-9a-z!@#$%^*+=-]+", message = "영문, 숫자, 특수문자 !@#$%^*+=-만 사용 가능합니다")
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$", message = "8자에서 16자 사이의 문자+숫자(+특수문자)를 조합하는 비밀번호를 만드세요")
+        private String new_password;
     }
 }
 

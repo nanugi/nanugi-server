@@ -34,21 +34,27 @@ public class EmailSenderService {
                 .field("subject", "[나누기] 이메일 인증이 필요합니다")
                 .field("html",
 
-                        "<div style=\"background-color:#fff; margin:0; padding:0; font-size:14px;\">\n" +
-                                "  <div style=\"width: 480px; margin: 0 auto; padding: 24px 12px 12px; border: none; background: #ffffff; text-align: center;\">\n" +
-                                "    <div style=\"max-width: 480px; margin-bottom: 30px; padding: 10px; background-color: #f7c46a; text-align: center;\">\n" +
-                                "        <div style=\"width: 100%; color: #fff;\">⚠️ 나누기에 회원가입 하신 적이 없으시면 링크를 클릭하지 마십시오.</div>\n" +
+                        "<div style=\"background-color:#11A656; margin:0; padding:0; border: none; font-size:14px; text-align: center;\">\n" +
+                                "  \n" +
+                                "  <div style=\"padding: 10px; background-color: #FFFFFF; text-align: center;\">\n" +
+                                "    <div style=\"width: 100%; color: #828282; font-size: 15px;\">❌ 나누기에 회원가입 하신 적이 없으시면 링크를 클릭하지 마십시오. ❌</div>\n" +
+                                "  </div>\n" +
+                                "\n" +
+                                "  <div style=\"padding-top: 83px; padding-bottom: 120px; text-align: center;\">\n" +
+                                "    <div>\n" +
+                                "      <img src=\"https://github.com/nanugi/nanugi-web/blob/master/src/assets/images/wordmark.png?raw=true\">\n" +
                                 "    </div>\n" +
-                                "    <p style=\"margin-bottom: 30px; font-size: 15px; line-height: 1.6;\">\n" +
-                                "      안녕하세요.<br />나누기에 회원가입을 해주셔서 감사합니다.<br /><br />가입을 완료하려면 아래 <strong>버튼</strong>을 클릭해주세요.\n" +
+                                "\n" +
+                                "    <p style=\"margin-bottom: 30px; font-size: 22px; line-height: 1.6; text-align: center; color: #fff;\">\n" +
+                                "      안녕하세요\uD83D\uDE00<br />\n" +
+                                "      나누기에 회원가입을 해주셔서 감사합니다.<br />\n" +
+                                "      <br />\n" +
+                                "      가입을 완료하려면 <strong style=\"text-decoration: underline;\">아래 버튼</strong>을 클릭해주세요.<br />\n" +
                                 "    </p>\n" +
-                                "\n" +
-                                "    <div style=\"width: 480px; background-color: #B3A6B3; height: 1px; margin-bottom: 30px;\"></div>\n" +
-                                "\n" +
-                                "    <a style=\"padding: 10px 30px; margin: 0px auto; background-color: #F2BB63; font-size: 20px; font-weight: bold;\n" +
-                                "    color: #fff; border-radius: 10px; cursor: pointer; margin-bottom: 20px; text-decoration: none;\" href=\"" +
-                                URL+code+"\">"
-                                +"        인증 완료\n" +
+                                "      \n" +
+                                "    <a style=\"padding: 8px 32px; margin: 0px auto; background-color: #FFF; font-size: 28px; font-weight: bold;\n" +
+                                "    color: #11A656; border-radius: 10px; cursor: pointer; margin-bottom: 20px; text-decoration: none;\" href=\"" + URL + code + "\">\n" +
+                                "      인증 완료\n" +
                                 "    </a>\n" +
                                 "  </div>\n" +
                                 "</div>"
@@ -66,20 +72,27 @@ public class EmailSenderService {
                 .field("to", to)
                 .field("subject", "[나누기] 비밀번호 찾기 인증 코드 입니다.")
                 .field("html",
-                    "<div style=\"background-color:#fff; margin:0; padding:0; font-size:14px;\">\n" +
-                            "  <div style=\"width: 480px; margin: 0 auto; padding: 24px 12px 12px; border: none; background: #ffffff; text-align: center;\">\n" +
-                            "    <div style=\"max-width: 480px; margin-bottom: 30px; padding: 10px; background-color: #f7c46a; text-align: center;\">\n" +
-                            "      <div style=\"width: 100%; color: #fff; font-weight: bold; font-size: 25px;\">비밀번호 변경</div>\n" +
+                    "<div style=\"background-color:#FFF; margin:0; padding:0; border: none; font-size:14px; text-align: center;\">\n" +
+                            "  \n" +
+                            "  <div style=\"padding: 14px; background-color: #11A656; text-align: center;\">\n" +
+                            "    <div style=\"width: 100%; color: #FFF; font-size: 15px;\">비밀번호 변경</div>\n" +
+                            "  </div>\n" +
+                            "\n" +
+                            "  <div style=\"padding-top: 83px; padding-bottom: 120px; text-align: center;\">\n" +
+                            "    <div>\n" +
+                            "      <img src=\"https://github.com/nanugi/nanugi-web/blob/master/src/assets/images/wordmark_.png?raw=true\">\n" +
                             "    </div>\n" +
-                            "    <p style=\"margin-bottom: 30px; font-size: 15px; line-height: 1.6;\">\n" +
-                            "      해당 회원의 비밀번호를 변경 시도를 했습니다. <br />비밀번호를 변경하기 위한 인증코드 입니다.<br /><br />비밀번호 변경을 완료하려면 아래 <strong>인증 코드</strong>를 입력하세요.\n" +
+                            "\n" +
+                            "    <p style=\"margin-bottom: 30px; font-size: 22px; line-height: 1.6; text-align: center; color: #000;\">\n" +
+                            "      해당 회원의 비밀번호 변경 시도를 했습니다.<br />\n" +
+                            "      비밀번호를 변경하기 위한 인증코드입니다.<br />\n" +
+                            "      <br />\n" +
+                            "      비밀번호 변경을 완료하시려면 <strong style=\"text-decoration: underline;\">아래 인증 코드</strong>를 입력하세요.<br />\n" +
                             "    </p>\n" +
-                            "\n" +
-                            "    <div style=\"width: 480px; background-color: #B3A6B3; height: 1px; margin-bottom: 30px;\"></div>\n" +
-                            "\n" +
-                            "    <a style=\"padding: 10px 30px; margin: 0px auto; background-color: #F2BB63; font-size: 20px; font-weight: bold;\n" +
-                            "    color: #fff; border-radius: 10px; margin-bottom: 20px; text-decoration: none;\">\n" +
-                            code + "\n" +
+                            "      \n" +
+                            "    <a style=\"padding: 8px 32px; margin: 0px auto; background-color: #FFF; font-size: 28px; font-weight: bold;\n" +
+                            "    color: #11A656; border-radius: 10px; cursor: pointer; margin-bottom: 20px; text-decoration: none;\" >\n" +
+                            "       " + code + "\n" +
                             "    </a>\n" +
                             "  </div>\n" +
                             "</div>"

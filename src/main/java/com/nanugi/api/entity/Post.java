@@ -6,6 +6,7 @@ import com.nanugi.api.model.dto.post.PostListResponse;
 import com.nanugi.api.model.dto.post.PostNanumInfoResponse;
 import com.nanugi.api.model.dto.post.PostResponse;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -59,6 +60,10 @@ public class Post extends TimeStampedEntity {
     @Column(columnDefinition = "integer default 0", nullable = false)
     private Integer liked;
 
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private Long view = 0L;
+
     public String getThumbnail(){
         if(images.size() > 0){
             return images.get(0).getImage_url();
@@ -68,6 +73,10 @@ public class Post extends TimeStampedEntity {
         int image_num = random.nextInt(5)+1;
         String image_url = "https://nanugi-bucket.s3.ap-northeast-2.amazonaws.com/img/thumbnail/" + image_num + ".jpg";
         return image_url;
+    }
+
+    public void addView(){
+        view = view + 1;
     }
 
     public PostNanumInfoResponse toPostNanumInfoResponse(){
@@ -102,6 +111,7 @@ public class Post extends TimeStampedEntity {
                 .title(title)
                 .content(content)
                 .post_id(post_id)
+                .view(view)
                 .build();
     }
 
@@ -140,6 +150,7 @@ public class Post extends TimeStampedEntity {
                 .title(title)
                 .is_close(false)
                 .liked(0)
+                .view(0L)
                 .build();
     }
 }

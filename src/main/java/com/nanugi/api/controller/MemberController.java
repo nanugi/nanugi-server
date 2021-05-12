@@ -166,6 +166,7 @@ public class MemberController {
     static class MemberPutRequest {
         @NotNull @NotEmpty
         @Size(max = 15, message = "닉네임은 최대 15자로 구성해야 합니다")
+        @Pattern(regexp = "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9]*", message = "닉네임은 한글, 영문, 숫자로만 이루어질 수 있습니다.")
         private String nickname;
     }
 

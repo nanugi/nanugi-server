@@ -55,6 +55,8 @@ public class PostController {
     @GetMapping(value = "/posts/{id}")
     public SingleResult<PostResponse> findPost(@ApiParam(value = "포스트 아이디", required = true) @PathVariable Long id) {
         Post post = postService.getPost(id);
+        post.addView();
+        postService.save(post);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();

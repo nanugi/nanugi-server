@@ -82,7 +82,7 @@ public class SignController {
     }
 
     @ApiOperation(value="이메일 인증 메일 다시 보내기", notes = "이메일 인증 메일을 다시 보낸다")
-    @PostMapping(value="/verification")
+    @PostMapping(value="/reverification")
     public CommonResult SendVerificationEmail(@ApiParam(value = "가입 이메일", required = true) @Valid @RequestBody CertRequest certRequest){
         Member user = userJpaRepo.findByUid(certRequest.getEmail()).orElseThrow(CUserNotFoundException::new);
 
@@ -184,6 +184,7 @@ public class SignController {
         @NotNull
         @NotEmpty
         @Size(max = 15, message = "닉네임을 15자 이하로 입력하세요")
+        @Pattern(regexp = "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9]*", message = "닉네임은 한글, 영문, 숫자로만 이루어질 수 있습니다.")
         String nickname;
     }
 

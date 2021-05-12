@@ -17,6 +17,7 @@ public class PostResponse {
     private String title;
     private String content;
     private LocalDateTime createdAt;
+    private Long view;
 
     private PostNanumInfoResponse detail;
 }

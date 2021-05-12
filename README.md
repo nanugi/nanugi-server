@@ -1,5 +1,5 @@
 # nanugi-server
-- [API Document](https://api.nanugi.ml/swagger-ui.html)
+- [API Document](https://api.nanugi-eco.com/swagger-ui.html)
 - [배포 예시(프론트엔드/디자인 팀과 협업)](https://nanugi.github.io/nanugi-web/)
 
 ## 나누기 팀 소개

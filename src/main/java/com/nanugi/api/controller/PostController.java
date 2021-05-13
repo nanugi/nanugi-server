@@ -80,7 +80,7 @@ public class PostController {
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
-        if(post.getMember().getMsrl() != user.getMsrl()){
+        if(!user.getRoles().contains("ADMIN_USER") && post.getMember().getMsrl() != user.getMsrl()){
             throw new CNotOwnerException();
         }
 
@@ -104,7 +104,7 @@ public class PostController {
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
-        if(post.getMember().getMsrl() != user.getMsrl()){
+        if(!user.getRoles().contains("ADMIN_USER") && post.getMember().getMsrl() != user.getMsrl()){
             throw new CNotOwnerException();
         }
 
@@ -127,7 +127,7 @@ public class PostController {
         Member user = userJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
         Post post = postService.getPost(post_id);
 
-        if(post.getMember().getMsrl() != user.getMsrl()){
+        if(!user.getRoles().contains("ADMIN_USER") && post.getMember().getMsrl() != user.getMsrl()){
             throw new CNotOwnerException();
         }
 

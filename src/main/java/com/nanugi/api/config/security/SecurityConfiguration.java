@@ -123,7 +123,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         Random random = new Random();
 
         try{
-            if(postJpaRepo.findAll().size() < 20){
+            if(postJpaRepo.findAll().size() == 0){
                 Post post = Post.build(test_user,
                         "나누기를 시작하세요!",
                         "새로운 나누기 글을 생성하세요!\n버그가 발생하는 경우, 글 삭제를 원하는 경우 고객문의를 이용해주세요.\n",

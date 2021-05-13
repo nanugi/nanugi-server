@@ -68,6 +68,10 @@ public class FavsController {
             throw new CAuthenticationEntryPointException();
         }
 
+        if(post.is_close()){
+            throw new CAuthenticationEntryPointException();
+        }
+
         String message = user.toggleFav(post);
 
         if(user.getFavs().size() > 30){

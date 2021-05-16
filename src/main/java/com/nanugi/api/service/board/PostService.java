@@ -47,10 +47,10 @@ public class PostService {
         String previous = null;
 
         if(allPosts.hasPrevious()){
-            previous = "https://api.nanugi.ml/v1/posts?page="+(page-1)+"&search="+keyword;
+            previous = "https://api.nanugi-eco.com/v1/posts?page="+(page-1)+"&search="+keyword;
         }
         if(allPosts.hasNext()){
-            next = "https://api.nanugi.ml/v1/posts?page="+(page+1)+"&search="+keyword;
+            next = "https://api.nanugi-eco.com/v1/posts?page="+(page+1)+"&search="+keyword;
         }
 
         List<PostListResponse> postResponses =
@@ -80,10 +80,10 @@ public class PostService {
         String previous = null;
 
         if(allPosts.hasPrevious()){
-            previous = "https://api.nanugi.ml/v1/posts?page="+(page-1);
+            previous = "https://api.nanugi-eco.com/v1/posts?page="+(page-1);
         }
         if(allPosts.hasNext()){
-            next = "https://api.nanugi.ml/v1/posts?page="+(page+1);
+            next = "https://api.nanugi-eco.com/v1/posts?page="+(page+1);
         }
 
         List<PostListResponse> postResponses =
@@ -113,10 +113,10 @@ public class PostService {
         String previous = null;
 
         if(allPosts.hasPrevious()){
-            previous = "https://api.nanugi.ml/v1/users/posts?"+"nickname="+nickname+"&page="+(page-1);
+            previous = "https://api.nanugi-eco.com/v1/users/posts?"+"nickname="+nickname+"&page="+(page-1);
         }
         if(allPosts.hasNext()){
-            next = "https://api.nanugi.ml/v1/users/posts?"+"nickname="+nickname+"&page="+(page+1);
+            next = "https://api.nanugi-eco.com/v1/users/posts?"+"nickname="+nickname+"&page="+(page+1);
         }
 
         List<PostListResponse> postResponses =

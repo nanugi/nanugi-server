@@ -31,7 +31,7 @@ public class EmailSenderService {
 
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
                 .basicAuth("api", API_KEY)
-                .field("from", "Nanugi Team <no-reply@nanugi.ml>")
+                .field("from", "Nanugi Team <no-reply@nanugi-eco.com>")
                 .field("to", to)
                 .field("subject", "[나누기] 이메일 인증이 필요합니다")
                 .field("html",
@@ -71,7 +71,7 @@ public class EmailSenderService {
 
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
                 .basicAuth("api", API_KEY)
-                .field("from", "Nanugi Team <no-reply@nanugi.ml>")
+                .field("from", "Nanugi Team <no-reply@nanugi-eco.com>")
                 .field("to", to)
                 .field("subject", "[나누기] 비밀번호 찾기 인증 코드 입니다.")
                 .field("html",
@@ -110,7 +110,7 @@ public class EmailSenderService {
 
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
                 .basicAuth("api", API_KEY)
-                .field("from", "나누기 고객센터 <no-reply@nanugi.ml>")
+                .field("from", "나누기 고객센터 <no-reply@nanugi-eco.com>")
                 .field("to", "division.foreveryoung@gmail.com")
                 .field("subject", "[나누기 새로운 고객문의] 새로운 고객문의 알림입니다.")
                 .field("text",

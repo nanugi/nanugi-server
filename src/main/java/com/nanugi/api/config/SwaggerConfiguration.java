@@ -25,6 +25,6 @@ public class SwaggerConfiguration {
     private ApiInfo swaggerInfo() {
         return new ApiInfoBuilder().title("Spring API Documentation")
                 .description("나누기 개발 시 사용되는 서버 API에 대한 연동 문서입니다 🍇")
-                .license("Nanugi Corporation").licenseUrl("https://github.com/nanugi").version("1.0").build();
+                .license("Nanugi Corporation").licenseUrl("https://www.nanugi-eco.com/nanugi-web/").version("1.0").build();
     }
 }

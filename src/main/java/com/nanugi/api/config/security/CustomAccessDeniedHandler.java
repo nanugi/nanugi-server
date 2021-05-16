@@ -15,6 +15,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws IOException {
-        response.sendRedirect("https://api.nanugi.ml/exception/accessdenied");
+        response.sendRedirect("https://api.nanugi-eco.com/exception/accessdenied");
     }
 }

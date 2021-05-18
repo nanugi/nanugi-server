@@ -17,7 +17,10 @@ public class AsyncService {
     private final S3Service s3Service;
     private final ImageService imageService;
 
+    /*
+    임시 삭제
     @Async
+    */
     public void uploadAndSaveImage(MultipartFile file, Long postId){
 
         String image_link = null;

@@ -24,7 +24,7 @@ public class EmailSenderService {
     @Value("${mailgun.url.base}")
     private String BASE_URL;
 
-    private String URL = "https://nanugi.github.io/nanugi-web/emailVerification/";
+    private String URL = "https://www.nanugi-eco.com/nanugi-web/emailVerification/";
 
     @Async
     public JsonNode sendVerificationEmail(String to, String code) throws UnirestException {

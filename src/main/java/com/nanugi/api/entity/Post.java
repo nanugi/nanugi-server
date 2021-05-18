@@ -31,7 +31,7 @@ public class Post extends TimeStampedEntity {
     private boolean is_close = false;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "postId")
     private List<Image> images= new ArrayList<>();
 

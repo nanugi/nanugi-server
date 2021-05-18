@@ -4,6 +4,7 @@ import com.nanugi.api.advice.exception.CEmailSigninFailedException;
 import com.nanugi.api.advice.exception.CNicknameAlreadyExistException;
 import com.nanugi.api.advice.exception.CUserNotFoundException;
 import com.nanugi.api.entity.Member;
+import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.MemberResponse;
 import com.nanugi.api.model.dto.post.PaginatedPostResponse;
 import com.nanugi.api.model.response.CommonResult;
@@ -156,8 +157,15 @@ public class MemberController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String id = authentication.getName();
         Member member = memberJpaRepo.findByUid(id).orElseThrow(CUserNotFoundException::new);
+        Member nonexist = memberJpaRepo.findByUid("noexist@nanugi-eco.com").orElseThrow(CUserNotFoundException::new);
 
-        memberJpaRepo.deleteById(member.getMsrl());
+        for(Post post:member.getPosts()){
+            postService.closePost(post.getPost_id());
+            post.setMember(nonexist);
+            postService.save(post);
+        }
+
+        memberJpaRepo.delete(member);
         return responseService.getSuccessResult();
     }
 

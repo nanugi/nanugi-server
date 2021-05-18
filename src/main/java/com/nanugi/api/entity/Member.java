@@ -57,11 +57,11 @@ public class Member extends TimeStampedEntity implements UserDetails {
     private List<String> roles = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private List<Post> posts = new ArrayList<>();
 
     @Builder.Default
-    @ManyToMany(targetEntity = Post.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Post.class, fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
     private List<Post> favs = new ArrayList<>();
 
     @Override

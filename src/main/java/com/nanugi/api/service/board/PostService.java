@@ -1,8 +1,10 @@
 package com.nanugi.api.service.board;
 
 import com.nanugi.api.advice.exception.CResourceNotExistException;
+import com.nanugi.api.entity.Image;
 import com.nanugi.api.entity.Post;
 import com.nanugi.api.model.dto.post.*;
+import com.nanugi.api.repo.ImageJpaRepo;
 import com.nanugi.api.repo.PostJpaRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostJpaRepo postJpaRepo;
+    private final ImageService imageService;
 
     public Post save(Post post){
         return postJpaRepo.save(post);
@@ -31,6 +34,12 @@ public class PostService {
     }
 
     public void deletePost(Long id){
+        System.out.println("hi");
+        Post post = getPost(id);
+        for(Image image: post.getImages()){
+            imageService.deleteImage(image.getImage_id());
+        }
+        System.out.println("hi");
         postJpaRepo.deleteById(id);
     }
 

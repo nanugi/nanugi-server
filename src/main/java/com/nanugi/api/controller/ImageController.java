@@ -92,7 +92,7 @@ public class ImageController {
         Image image = imageService.getImage(imageId);
         Post post = postService.getPost(image.getPostId());
 
-        if(post.getMember().getUid() != user.getUid()){
+        if(!user.getRoles().contains("ADMIN_USER") && post.getMember().getUid() != user.getUid()){
             throw new CNotOwnerException();
         }
 

@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -51,11 +50,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${admin.user.password}")
     private String adminUserPassword;
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
 
     @Bean
     public FilterRegistrationBean processCorsFilter() {
@@ -106,13 +100,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                             passwordEncoder.encode(testUserPassword));
             test_user.addRole("ROLE_USER");
             test_user.setIsVerified(true);
-            userJpaRepo.save(test_user);
+            test_user = userJpaRepo.save(test_user);
 
             admin_user = Member.build(adminUserId, "관리자", "", passwordEncoder.encode(adminUserPassword));
             admin_user.addRole("ADMIN_USER");
             admin_user.addRole("ROLE_USER");
             admin_user.setIsVerified(true);
-            userJpaRepo.save(admin_user);
+            admin_user = userJpaRepo.save(admin_user);
         }
         catch (Exception e){
             System.out.println(e.getClass()+e.getMessage());

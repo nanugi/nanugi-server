@@ -62,7 +62,7 @@ public class Post extends TimeStampedEntity {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private Long view = 0L;
+    private Long view;
 
     public String getThumbnail(){
         if(images.size() > 0){
